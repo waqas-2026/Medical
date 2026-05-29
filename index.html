@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Khan Medicos Pro</title>
+  <!-- SheetJS Library for Excel Import -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    /* CSS RESET & BASE STYLES */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: #0f1117; color: #e8eaf6; min-height: 100vh; }
     
@@ -46,8 +47,8 @@
     }
     .nav-btn.active { color: #fff; border-bottom: 2px solid #3d5afe; }
     
-    .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
-    .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }    
+    .container { padding: 20px; max-width: 1200px; margin: 0 auto; }    .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }
+    
     /* GRID SYSTEM */
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .stat-card { background: linear-gradient(135deg, #1a237e, #283593); padding: 16px; border-radius: 10px; text-align: center; }
@@ -62,10 +63,12 @@
     tr:hover td { background: rgba(255,255,255,0.03); }
     
     /* BUTTONS */
-    .btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; margin: 2px; }
     .btn-primary { background: #3d5afe; color: white; }
+    .btn-success { background: #00e676; color: white; }
     .btn-danger { background: #ff5252; color: white; }
     .btn-sec { background: rgba(255,255,255,0.1); color: #e8eaf6; }
+    .btn-warning { background: #ffc107; color: black; }
     
     /* BILL PREVIEW (PRINT MODE) */
     #bill-modal {
@@ -90,13 +93,14 @@
     }
 
     .hidden { display: none; }
+    .file-input { display: none; }
   </style>
 </head>
 <body>
-
   <!-- LOGIN SCREEN -->
   <div id="login-screen" class="login-container">
-    <div class="login-box">      <div class="login-logo">💊</div>
+    <div class="login-box">
+      <div class="login-logo">💊</div>
       <div class="login-title">Khan Medicos Pro</div>
       <input type="text" id="user" class="input" placeholder="Username" value="admin">
       <input type="password" id="pass" class="input" placeholder="Password" value="admin123">
@@ -141,27 +145,33 @@
           <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)">
             <div class="stat-val" id="d-out">0</div>
             <div class="stat-lbl">Out of Stock</div>
-          </div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">
+          </div>          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">
             <div class="stat-val" id="d-rev">PKR 0</div>
             <div class="stat-lbl">Today's Sale</div>
-          </div>        </div>
+          </div>
+        </div>
         <div class="card">
           <h3>Quick Actions</h3>
           <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="openAdd()">+ Add New Med</button>
+            <button class="btn btn-success" onclick="document.getElementById('excel-file').click()">📥 Import Excel</button>
+            <button class="btn btn-sec" onclick="exportData()">📤 Export JSON</button>
             <button class="btn btn-sec" onclick="go('bill')">🧾 New Bill</button>
           </div>
+          <input type="file" id="excel-file" class="file-input" accept=".xlsx,.xls,.csv" onchange="importExcel(this)">
         </div>
       </div>
 
       <!-- INVENTORY -->
       <div id="inv" class="hidden">
         <div class="card">
-          <div style="display:flex; gap:10px; margin-bottom:12px;">
-            <input type="text" id="search" class="input" placeholder="Search medicines..." style="margin:0" oninput="renderInv()">
+          <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+            <input type="text" id="search" class="input" placeholder="Search medicines..." style="margin:0; flex:1; min-width:200px;" oninput="renderInv()">
             <button class="btn btn-primary" onclick="openAdd()">+ Add</button>
+            <button class="btn btn-success" onclick="document.getElementById('excel-file-inv').click()">📥 Import Excel</button>
+            <button class="btn btn-sec" onclick="exportData()">📤 Export</button>
           </div>
+          <input type="file" id="excel-file-inv" class="file-input" accept=".xlsx,.xls,.csv" onchange="importExcel(this)">
           <div class="table-wrap">
             <table>
               <thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead>
@@ -184,8 +194,7 @@
               <h3>Add Items</h3>
               <input type="text" id="b-search" class="input" placeholder="Type to search & add..." oninput="renderBillSearch()">
               <div id="b-results" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
-            </div>
-          </div>
+            </div>          </div>
           <div>
             <div class="card" style="position:sticky; top:20px;">
               <h3>Cart (<span id="c-count">0</span>)</h3>
@@ -194,7 +203,8 @@
                 <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="c-sub">0</span></div>
                 <div style="display:flex; justify-content:space-between;"><span>GST (5%):</span><span id="c-gst">0</span></div>
                 <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:#00e676; margin-top:5px;">
-                  <span>Total:</span><span id="c-tot">PKR 0</span>                </div>
+                  <span>Total:</span><span id="c-tot">PKR 0</span>
+                </div>
                 <button class="btn btn-primary" style="width:100%; margin-top:15px; padding:10px;" onclick="makeBill()">Generate Bill</button>
               </div>
             </div>
@@ -233,8 +243,7 @@
     <div class="bill-paper">
       <div class="bill-head">
         <div style="font-size:24px;">💊</div>
-        <div style="font-size:20px; font-weight:800; color:#1a237e;">Khan Medicos</div>
-        <div style="font-size:12px; color:#555;">Professional Pharmacy</div>
+        <div style="font-size:20px; font-weight:800; color:#1a237e;">Khan Medicos</div>        <div style="font-size:12px; color:#555;">Professional Pharmacy</div>
       </div>
       <div class="bill-meta" id="b-meta"></div>
       <table class="bill-table">
@@ -243,9 +252,10 @@
       </table>
       <div class="bill-tot" id="b-tot"></div>
       <div style="text-align:center; margin-top:20px; font-size:11px; color:#666;">
-        Aapki sehat hamari zimmedari hai.<br>Contact: 0300-1234567      </div>
+        Aapki sehat hamari zimmedari hai.<br>Contact: 0300-1234567
+      </div>
       <div class="bill-actions" style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
-        <button class="btn btn-primary" onclick="window.print()">️ Print</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
         <button class="btn btn-sec" style="color:black; border:1px solid #ccc;" onclick="document.getElementById('bill-modal').style.display='none'">Close</button>
       </div>
     </div>
@@ -253,57 +263,12 @@
 
   <script>
     // --- DATA & STATE ---
-    // Top ~50 Medicines embedded for instant load
-    var meds = [
+    var meds = JSON.parse(localStorage.getItem('khan_meds')) || [
       {id:1, name:"Panadol (Paracetamol 500mg)", cat:"Analgesic", stock:200, price:30, min:50},
       {id:2, name:"Calpol (Paracetamol 500mg)", cat:"Analgesic", stock:150, price:28, min:50},
       {id:3, name:"Panadol Extra (650mg)", cat:"Analgesic", stock:100, price:45, min:30},
       {id:4, name:"Brufen (Ibuprofen 400mg)", cat:"NSAID", stock:80, price:35, min:30},
-      {id:5, name:"Brufen Syrup", cat:"NSAID", stock:40, price:110, min:20},
-      {id:6, name:"Ponstan (Mefenamic Acid)", cat:"NSAID", stock:60, price:40, min:25},
-      {id:7, name:"Ponstan Forte", cat:"NSAID", stock:50, price:75, min:20},
-      {id:8, name:"Dicloran (Diclofenac 50mg)", cat:"NSAID", stock:70, price:60, min:25},
-      {id:9, name:"Cataflam (Diclofenac K)", cat:"NSAID", stock:45, price:120, min:15},
-      {id:10, name:"Loprin (Aspirin 75mg)", cat:"Cardiac", stock:90, price:20, min:30},
-      {id:11, name:"Disprin", cat:"Analgesic", stock:100, price:25, min:30},
-      {id:12, name:"Tramal 50mg", cat:"Opioid", stock:30, price:180, min:10},
-      {id:13, name:"Risek 20mg", cat:"Gastric", stock:120, price:260, min:40},
-      {id:14, name:"Risek Forte 40mg", cat:"Gastric", stock:80, price:420, min:30},
-      {id:15, name:"Nexum 20mg", cat:"Gastric", stock:90, price:220, min:30},
-      {id:16, name:"Nexum 40mg", cat:"Gastric", stock:70, price:350, min:25},
-      {id:17, name:"Maxolon 10mg", cat:"Anti-Emetic", stock:60, price:30, min:20},
-      {id:18, name:"Motilium 10mg", cat:"Anti-Emetic", stock:85, price:85, min:25},
-      {id:19, name:"Gravinate (Ondansetron)", cat:"Anti-Emetic", stock:55, price:200, min:20},
-      {id:20, name:"Buscopan 10mg", cat:"Spasmodic", stock:75, price:55, min:25},
-      {id:21, name:"Flagyl 400mg", cat:"Antibiotic", stock:100, price:35, min:30},
-      {id:22, name:"Ciproxin 500mg", cat:"Antibiotic", stock:60, price:290, min:20},
-      {id:23, name:"Novidat 500mg", cat:"Antibiotic", stock:80, price:260, min:25},
-      {id:24, name:"Amoxil 500mg", cat:"Antibiotic", stock:90, price:160, min:30},
-      {id:25, name:"Augmentin 1g", cat:"Antibiotic", stock:50, price:240, min:15},
-      {id:26, name:"Azomax 500mg", cat:"Antibiotic", stock:70, price:195, min:20},
-      {id:27, name:"Zyrtec 10mg", cat:"Allergy", stock:100, price:140, min:30},
-      {id:28, name:"Rigix 10mg", cat:"Allergy", stock:120, price:75, min:40},
-      {id:29, name:"Telfast 120mg", cat:"Allergy", stock:80, price:240, min:25},
-      {id:30, name:"Ventolin Inhaler", cat:"Respiratory", stock:40, price:220, min:15},
-      {id:31, name:"Norvasc 5mg", cat:"BP", stock:90, price:220, min:30},
-      {id:32, name:"Amcard 5mg", cat:"BP", stock:100, price:90, min:30},
-      {id:33, name:"Lasix 40mg", cat:"Diuretic", stock:100, price:35, min:30},
-      {id:34, name:"Glucophage 500mg", cat:"Diabetes", stock:120, price:40, min:40},
-      {id:35, name:"Neurobion", cat:"Vitamin", stock:100, price:115, min:30},
-      {id:36, name:"Evion 400", cat:"Vitamin", stock:90, price:110, min:30},
-      {id:37, name:"Sangobion", cat:"Iron", stock:80, price:120, min:25},
-      {id:38, name:"Viagra 50mg", cat:"ED", stock:20, price:1200, min:5},      {id:39, name:"Zega 100mg", cat:"ED", stock:30, price:280, min:10},
-      {id:40, name:"Metformin 850mg", cat:"Diabetes", stock:110, price:65, min:40},
-      {id:41, name:"Amaryl 2mg", cat:"Diabetes", stock:80, price:250, min:25},
-      {id:42, name:"Tenormin 50mg", cat:"BP", stock:80, price:95, min:25},
-      {id:43, name:"Concor 5mg", cat:"BP", stock:90, price:210, min:30},
-      {id:44, name:"Lipiget 10mg", cat:"Cholesterol", stock:70, price:210, min:25},
-      {id:45, name:"Lipitor 10mg", cat:"Cholesterol", stock:50, price:390, min:15},
-      {id:46, name:"Clarityne 10mg", cat:"Allergy", stock:100, price:180, min:30},
-      {id:47, name:"Ventolin Syrup", cat:"Respiratory", stock:45, price:95, min:15},
-      {id:48, name:"Prospan Syrup", cat:"Cough", stock:35, price:290, min:10},
-      {id:49, name:"Imodium", cat:"Diarrhea", stock:60, price:65, min:20},
-      {id:50, name:"Gelusil", cat:"Antacid", stock:100, price:45, min:30}
+      {id:5, name:"Brufen Syrup", cat:"NSAID", stock:40, price:110, min:20}
     ];
 
     var cart = [];
@@ -327,8 +292,7 @@
     function logout() { location.reload(); }
 
     function go(tab) {
-      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));      document.getElementById(tab).classList.remove('hidden');
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
       
@@ -338,10 +302,61 @@
       if (tab==='alert') renderAlert();
     }
 
+    // --- EXCEL IMPORT FUNCTION ---
+    function importExcel(input) {
+      var file = input.files[0];
+      if (!file) return;
+      
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var data = new Uint8Array(e.target.result);
+          var workbook = XLSX.read(data, {type: 'array'});
+          var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          var jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+          
+          // Parse Excel data
+          var imported = 0;
+          var startRow = 1; // Skip header row
+          
+          for (var i = startRow; i < jsonData.length; i++) {
+            var row = jsonData[i];
+            if (row.length < 5) continue; // Skip empty rows
+            
+            // Format: S.No, Generic Name, Brand Name, Category, Packaging, Price
+            // Or: Name, Category, Stock, Price, Min
+            var med = {
+              id: Date.now() + i,
+              name: row[2] || row[0] || '', // Brand Name or first column
+              cat: row[3] || row[1] || 'General', // Category
+              stock: parseInt(row[4]) || 50, // Default stock 50
+              price: parseFloat(row[5]) || parseFloat(row[3]) || 0,
+              min: 20
+            };
+            
+            if (med.name && med.price > 0) {
+              meds.push(med);
+              imported++;
+            }
+          }
+          
+          localStorage.setItem('khan_meds', JSON.stringify(meds));
+          alert('Successfully imported ' + imported + ' medicines!');          renderDash();
+          renderInv();
+          input.value = ''; // Clear input
+        } catch (err) {
+          alert('Error importing Excel: ' + err.message);
+          console.error(err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
     // --- RENDER FUNCTIONS ---
     function renderDash() {
       document.getElementById('d-total').innerText = meds.length;
-      var val = meds.reduce((s,m)=>s+(m.stock*m.price), 0);      document.getElementById('d-val').innerText = 'PKR '+val;
+      var val = meds.reduce((s,m)=>s+(m.stock*m.price), 0);
+      document.getElementById('d-val').innerText = 'PKR '+val;
       document.getElementById('d-out').innerText = meds.filter(m=>m.stock===0).length;
       
       var today = new Date().toLocaleDateString();
@@ -354,7 +369,7 @@
       var filtered = meds.filter(m => m.name.toLowerCase().includes(q) || m.cat.toLowerCase().includes(q));
       var html = '';
       filtered.forEach(m => {
-        var status = m.stock===0 ? '<span style="color:#ff5252">Out</span>' : (m.stock<=m.min ? '<span style="color:#ffc107">Low</span>' : 'OK');
+        var status = m.stock===0 ? '<span style="color:#ff5252">Out</span>' : (m.stock<=m.min ? '<span style="color:#ffc107">Low</span>' : '<span style="color:#00e676">OK</span>');
         html += `<tr>
           <td><b>${m.name}</b></td>
           <td>${m.cat}</td>
@@ -375,8 +390,7 @@
       var html = '';
       if(low.length===0) html = '<p style="text-align:center; color:#90a4ae;">All stock is healthy ✅</p>';
       else {
-        low.forEach(m => {
-          html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between;">
+        low.forEach(m => {          html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between;">
             <span>${m.name}</span>
             <span style="color:${m.stock===0?'#ff5252':'#ffc107'}">Stock: ${m.stock} (Min: ${m.min})</span>
           </div>`;
@@ -390,7 +404,8 @@
       var list = meds.filter(m => m.name.toLowerCase().includes(q));
       var html = '';
       list.slice(0, 8).forEach(m => {
-        html += `<div style="padding:8px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">          <div>
+        html += `<div style="padding:8px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
             <div style="font-weight:600; font-size:13px;">${m.name}</div>
             <div style="font-size:11px; color:#90a4ae;">Stock: ${m.stock} | PKR ${m.price}</div>
           </div>
@@ -424,8 +439,7 @@
       });
       document.getElementById('cart-list').innerHTML = html;
       
-      var gst = sub * 0.05;
-      var tot = sub + gst;
+      var gst = sub * 0.05;      var tot = sub + gst;
       document.getElementById('c-sub').innerText = 'PKR '+sub.toFixed(0);
       document.getElementById('c-gst').innerText = 'PKR '+gst.toFixed(0);
       document.getElementById('c-tot').innerText = 'PKR '+tot.toFixed(0);
@@ -439,7 +453,8 @@
       if (ex) {
         if (ex.qty >= item.stock) { alert('Not enough stock!'); return; }
         ex.qty++;
-      } else {        cart.push({ ...item, qty: 1 });
+      } else {
+        cart.push({ ...item, qty: 1 });
       }
       renderCart();
     }
@@ -468,12 +483,12 @@
         var med = meds.find(m => m.id === c.id);
         if (med) med.stock -= c.qty;
       });
+      localStorage.setItem('khan_meds', JSON.stringify(meds));
 
       // Save Bill
       var bill = {
         id: 'INV-' + Date.now().toString().slice(-6),
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
+        date: new Date().toLocaleDateString(),        time: new Date().toLocaleTimeString(),
         patient: pName,
         phone: document.getElementById('p-phone').value,
         items: [...cart],
@@ -488,8 +503,9 @@
       // Reset
       cart = [];
       document.getElementById('p-name').value = '';
-      document.getElementById('p-phone').value = '';      renderCart();
-      renderDash(); // Update stats
+      document.getElementById('p-phone').value = '';
+      renderCart();
+      renderDash();
     }
 
     function showBill(b) {
@@ -521,8 +537,7 @@
         document.getElementById('m-stock').value = m.stock;
         document.getElementById('m-price').value = m.price;
         document.getElementById('m-min').value = m.min;
-      } else {
-        document.getElementById('m-name').value = '';
+      } else {        document.getElementById('m-name').value = '';
         document.getElementById('m-cat').value = 'General';
         document.getElementById('m-stock').value = '';
         document.getElementById('m-price').value = '';
@@ -537,6 +552,7 @@
       var stock = parseInt(document.getElementById('m-stock').value);
       var price = parseInt(document.getElementById('m-price').value);
       var min = parseInt(document.getElementById('m-min').value);
+
       if (!name || !price) { alert('Fill name and price'); return; }
 
       if (editId) {
@@ -545,6 +561,7 @@
       } else {
         meds.push({ id: Date.now(), name, cat, stock, price, min });
       }
+      localStorage.setItem('khan_meds', JSON.stringify(meds));
       document.getElementById('add-modal').style.display = 'none';
       renderInv();
       renderDash();
@@ -553,10 +570,21 @@
     function delMed(id) {
       if (confirm('Delete this medicine?')) {
         meds = meds.filter(m => m.id !== id);
+        localStorage.setItem('khan_meds', JSON.stringify(meds));
         renderInv();
         renderDash();
       }
     }
-  </script>
-</body>
+
+    function exportData() {
+      var dataStr = JSON.stringify(meds, null, 2);
+      var blob = new Blob([dataStr], {type: 'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'khan_medicines.json';
+      a.click();
+      alert('Data exported successfully!');
+    }
+  </script></body>
 </html>
