@@ -3,51 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro - Complete Pharmacy System</title>
+  <title>Khan Medicos Pro - Complete</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: #0f1117; color: #e8eaf6; min-height: 100vh; }
     
     /* LOGIN SCREEN */
-    .login-container {
-      position: fixed; inset: 0; background: #0f1117;
-      display: flex; align-items: center; justify-content: center; z-index: 100;
-    }
-    .login-box {
-      background: #1a1d2e; padding: 30px; border-radius: 12px; width: 90%; max-width: 380px;
-      border: 1px solid rgba(255,255,255,0.1); text-align: center;
-    }
+    .login-container { position: fixed; inset: 0; background: #0f1117; display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .login-box { background: #1a1d2e; padding: 30px; border-radius: 12px; width: 90%; max-width: 380px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
     .login-logo { font-size: 40px; margin-bottom: 10px; }
     .login-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
-    .input {
-      width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; padding: 10px; color: white; margin-bottom: 12px; font-size: 15px;
-    }
-    .btn-login {
-      width: 100%; background: #3d5afe; color: white; border: none; padding: 12px;
-      border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
-    }
+    .input { width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: white; margin-bottom: 12px; font-size: 15px; }
+    .btn-login { width: 100%; background: #3d5afe; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
     .error-msg { color: #ff5252; font-size: 13px; margin-top: 8px; display: none; }
     
     /* APP LAYOUT */
-    .header {
-      background: #1a1d2e; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50;
-    }
+    .header { background: #1a1d2e; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
     .brand { display: flex; align-items: center; gap: 10px; }
     .logo { width: 36px; height: 36px; background: #3d5afe; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
     .brand-name { font-weight: 700; font-size: 18px; }
     .nav { display: flex; gap: 8px; overflow-x: auto; padding: 0 20px; background: #0f1117; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .nav-btn {
-      background: transparent; border: none; color: #90a4ae; padding: 12px 16px;
-      font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
-    }
+    .nav-btn { background: transparent; border: none; color: #90a4ae; padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
     .nav-btn.active { color: #fff; border-bottom: 2px solid #3d5afe; }
     
     .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
     .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }
-        /* DASHBOARD GRID */
+    
+    /* GRID SYSTEM */
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .stat-card { background: linear-gradient(135deg, #1a237e, #283593); padding: 16px; border-radius: 10px; text-align: center; }
     .stat-val { font-size: 24px; font-weight: 700; margin: 6px 0; }
@@ -64,54 +47,26 @@
     .btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; margin: 2px; }
     .btn-primary { background: #3d5afe; color: white; }
     .btn-success { background: #00e676; color: white; }
-    .btn-danger { background: #ff5252; color: white; }
-    .btn-sec { background: rgba(255,255,255,0.1); color: #e8eaf6; }
-    .btn-warning { background: #ffc107; color: black; }
-    
-    /* BADGES */
-    .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-    .badge-ok { background: rgba(0,230,118,0.2); color: #00e676; }
-    .badge-low { background: rgba(255,193,7,0.2); color: #ffc107; }
-    .badge-out { background: rgba(255,82,82,0.2); color: #ff5252; }
-    .badge-expiry { background: rgba(156,39,176,0.2); color: #9c27b0; }
+    .btn-danger { background: #ff5252; color: white; }    .btn-sec { background: rgba(255,255,255,0.1); color: #e8eaf6; }
     
     /* MODALS */
-    .modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200;
-      display: none; align-items: center; justify-content: center; padding: 20px;
-    }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal.active { display: flex; }
-    .modal-content {
-      background: #1a1d2e; border-radius: 12px; padding: 24px; width: 100%; max-width: 500px;
-      max-height: 90vh; overflow-y: auto;
-    }
+    .modal-content { background: #1a1d2e; border-radius: 12px; padding: 24px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
     .full-width { grid-column: 1 / -1; }
     
     /* BILL PREVIEW */
-    .bill-paper {
-      background: white; color: black; width: 100%; max-width: 400px; padding: 20px; border-radius: 8px;
-    }
+    .bill-paper { background: white; color: black; width: 100%; max-width: 400px; padding: 20px; border-radius: 8px; }
     .bill-head { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 10px; }
     .bill-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; margin-bottom: 10px; }
     .bill-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
     .bill-table th { background: #eee; color: black; padding: 6px; border: 1px solid #ddd; }
-    .bill-table td { padding: 6px; border: 1px solid #eee; color: black; }    .bill-tot { border-top: 2px solid black; padding-top: 5px; font-weight: 700; font-size: 14px; }
+    .bill-table td { padding: 6px; border: 1px solid #eee; color: black; }
+    .bill-tot { border-top: 2px solid black; padding-top: 5px; font-weight: 700; font-size: 14px; }
     
-    @media print {
-      body * { visibility: hidden; }
-      #bill-modal, #bill-modal * { visibility: visible; }
-      #bill-modal { position: absolute; left: 0; top: 0; width: 100%; background: white; display: block; }
-      .bill-actions { display: none; }
-    }
-    
-    /* MOBILE BILLING */
-    @media (max-width: 768px) {
-      .billing-grid { grid-template-columns: 1fr !important; }
-      .cart-sidebar { position: static !important; }
-      .grid-4 { grid-template-columns: repeat(2, 1fr); }
-    }
-    
+    @media print { body * { visibility: hidden; } #bill-modal, #bill-modal * { visibility: visible; } #bill-modal { position: absolute; left: 0; top: 0; width: 100%; background: white; display: block; } .bill-actions { display: none; } }
+    @media (max-width: 768px) { .billing-grid { grid-template-columns: 1fr !important; } .cart-sidebar { position: static !important; } .grid-4 { grid-template-columns: repeat(2, 1fr); } }
     .hidden { display: none !important; }
     .file-input { display: none; }
   </style>
@@ -134,18 +89,18 @@
   <div id="app" class="hidden">
     <div class="header">
       <div class="brand">
-        <div class="logo">💊</div>
+        <div class="logo"></div>
         <div class="brand-name">Khan Medicos</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <span id="user-role-display" style="font-size:12px; color:#90a4ae;"></span>
         <button class="btn btn-sec" onclick="logout()">Logout</button>
       </div>
-    </div>
-    
+    </div>    
     <div class="nav">
       <button class="nav-btn admin-only" id="nav-dash" onclick="go('dash')">📊 Dashboard</button>
-      <button class="nav-btn" id="nav-inv" onclick="go('inv')">💊 Inventory</button>      <button class="nav-btn" id="nav-bill" onclick="go('bill')">🧾 Billing</button>
+      <button class="nav-btn" id="nav-inv" onclick="go('inv')">💊 Inventory</button>
+      <button class="nav-btn" id="nav-bill" onclick="go('bill')">🧾 Billing</button>
       <button class="nav-btn" id="nav-alert" onclick="go('alert')">⚠️ Alerts</button>
     </div>
 
@@ -153,29 +108,17 @@
       <!-- DASHBOARD -->
       <div id="dash" class="hidden">
         <div class="grid-4">
-          <div class="stat-card">
-            <div class="stat-val" id="d-total">0</div>
-            <div class="stat-lbl">Total Medicines</div>
-          </div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
-            <div class="stat-val" id="d-val">PKR 0</div>
-            <div class="stat-lbl">Stock Value</div>
-          </div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)">
-            <div class="stat-val" id="d-out">0</div>
-            <div class="stat-lbl">Out of Stock</div>
-          </div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">
-            <div class="stat-val" id="d-rev">PKR 0</div>
-            <div class="stat-lbl">Today's Sale</div>
-          </div>
+          <div class="stat-card"><div class="stat-val" id="d-total">0</div><div class="stat-lbl">Total Medicines</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><div class="stat-val" id="d-val">PKR 0</div><div class="stat-lbl">Stock Value</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)"><div class="stat-val" id="d-out">0</div><div class="stat-lbl">Out of Stock</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-val" id="d-rev">PKR 0</div><div class="stat-lbl">Today's Sale</div></div>
         </div>
         <div class="card admin-only">
           <h3>Quick Actions</h3>
           <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
             <button class="btn btn-primary admin-only" onclick="openAdd()">+ Add Medicine</button>
             <button class="btn btn-success admin-only" onclick="document.getElementById('excel-file').click()">📥 Import Excel</button>
-            <button class="btn btn-sec admin-only" onclick="exportCSV()">📄 Export CSV</button>
+            <button class="btn btn-sec admin-only" onclick="exportCSV()"> Export CSV</button>
           </div>
           <input type="file" id="excel-file" class="file-input" accept=".xlsx,.xls" onchange="importExcel(this)">
         </div>
@@ -194,15 +137,15 @@
           <div class="table-wrap">
             <table>
               <thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
-              <tbody id="inv-body"></tbody>            </table>
+              <tbody id="inv-body"></tbody>
+            </table>
           </div>
           <div id="pagination-container" style="display:flex; justify-content:center; gap:10px; margin-top:15px; align-items:center;"></div>
           <div id="page-info" style="text-align:center; font-size:12px; color:#90a4ae; margin-top:5px;"></div>
         </div>
       </div>
 
-      <!-- BILLING -->
-      <div id="bill" class="hidden">
+      <!-- BILLING -->      <div id="bill" class="hidden">
         <div class="billing-grid" style="display:grid; grid-template-columns: 1fr 350px; gap:20px;">
           <div>
             <div class="card">
@@ -243,15 +186,15 @@
       <div id="alert" class="hidden">
         <div class="card">
           <h3 style="color:#ff5252; margin-bottom:15px;">⚠️ Low Stock & Expiring Soon</h3>
-          <div id="alert-list"></div>        </div>
+          <div id="alert-list"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- ADD/EDIT MEDICINE MODAL -->
   <div id="add-modal" class="modal">
-    <div class="modal-content">
-      <h3 id="modal-title" style="margin-bottom:16px;">Add Medicine</h3>
+    <div class="modal-content">      <h3 id="modal-title" style="margin-bottom:16px;">Add Medicine</h3>
       <div class="form-grid">
         <input type="text" id="m-name" class="input full-width" placeholder="Medicine Name *">
         <input type="text" id="m-cat" class="input" placeholder="Category" value="General">
@@ -287,11 +230,12 @@
         Aapki sehat hamari zimmedari hai.<br>Contact: 0300-1234567
       </div>
       <div class="bill-actions" style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
-        <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+        <button class="btn btn-primary" onclick="window.print()">️ Print</button>
         <button class="btn btn-sec" style="color:black; border:1px solid #ccc;" onclick="closeBillModal()">Close</button>
       </div>
     </div>
   </div>
+
   <script>
     // --- DATABASE ---
     var usersDB = [
@@ -299,8 +243,6 @@
       { id: "staff1", pass: "123456", role: "Staff" },
       { id: "staff2", pass: "123456", role: "Staff" }
     ];
-
-    // State
     var currentUserRole = "";
     var meds = JSON.parse(localStorage.getItem('khan_meds')) || [];
     var cart = [];
@@ -341,7 +283,8 @@
       }
     }
 
-    function logout() { location.reload(); }    function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
+    function logout() { location.reload(); }
+    function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
 
     function go(tab) {
       document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
@@ -349,8 +292,7 @@
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       if(tab === 'dash') document.getElementById('nav-dash')?.classList.add('active');
       if(tab === 'inv') document.getElementById('nav-inv').classList.add('active');
-      if(tab === 'bill') document.getElementById('nav-bill').classList.add('active');
-      if(tab === 'alert') document.getElementById('nav-alert').classList.add('active');
+      if(tab === 'bill') document.getElementById('nav-bill').classList.add('active');      if(tab === 'alert') document.getElementById('nav-alert').classList.add('active');
       
       if (tab==='dash') renderDash();
       if (tab==='inv') searchAndRender();
@@ -373,14 +315,17 @@
           var jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
           
           var imported = 0;
+          // Data starts from row 1 (skipping header row 0)
           for (var i = 1; i < jsonData.length; i++) {
             var row = jsonData[i];
             if (row.length < 5) continue;
+            // Map based on provided file structure:
+            // Col 0: S.No, Col 1: Generic Name, Col 2: Brand Name, Col 3: Category, Col 4: Packaging, Col 5: Price
             var med = {
               id: Date.now() + i,
-              name: row[2] || row[1] || '',
+              name: row[2] || row[1] || '', // Use Brand Name, fallback to Generic
               cat: row[3] || 'General',
-              stock: 100,
+              stock: 100, // Default stock as Excel has no stock column
               price: parseFloat(row[5]) || 0,
               min: 20,
               expiry: '',
@@ -390,13 +335,13 @@
             if (med.name && med.price > 0) {
               meds.push(med);
               imported++;
-            }          }
+            }
+          }
           localStorage.setItem('khan_meds', JSON.stringify(meds));
           alert('Successfully imported ' + imported + ' medicines!');
           renderDash();
           searchAndRender();
-          input.value = '';
-        } catch (err) {
+          input.value = '';        } catch (err) {
           alert('Error: ' + err.message);
         }
       };
@@ -439,13 +384,13 @@
       renderInventoryPage();
     }
 
-    function renderInventoryPage() {      var totalPages = Math.ceil(filteredMeds.length / itemsPerPage);
+    function renderInventoryPage() {
+      var totalPages = Math.ceil(filteredMeds.length / itemsPerPage);
       if (currentPage > totalPages) currentPage = 1;
       if (totalPages === 0) currentPage = 1;
 
       var start = (currentPage - 1) * itemsPerPage;
-      var end = start + itemsPerPage;
-      var pageItems = filteredMeds.slice(start, end);
+      var end = start + itemsPerPage;      var pageItems = filteredMeds.slice(start, end);
 
       var html = '';
       pageItems.forEach(m => {
@@ -489,38 +434,31 @@
       renderInventoryPage();
       document.querySelector('.table-wrap').scrollTop = 0;
     }
+
     function renderAlert() {
       var low = meds.filter(m => m.stock <= m.min && m.stock > 0);
       var out = meds.filter(m => m.stock === 0);
       var expiring = meds.filter(m => {
-        if (!m.expiry) return false;
-        var days = Math.ceil((new Date(m.expiry) - new Date()) / (1000*60*60*24));
+        if (!m.expiry) return false;        var days = Math.ceil((new Date(m.expiry) - new Date()) / (1000*60*60*24));
         return days <= 30 && days > 0;
       });
       
       var html = '';
       if (out.length > 0) {
         html += `<div style="margin-bottom:20px;"><h4 style="color:#ff5252; margin-bottom:10px;">🚫 Out of Stock (${out.length})</h4>`;
-        out.slice(0,5).forEach(m => {
-          html += `<div style="padding:10px; background:rgba(255,82,82,0.1); border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between;">
-            <span>${m.name}</span><span style="color:#ff5252;">Stock: 0</span></div>`;
-        });
+        out.slice(0,5).forEach(m => { html += `<div style="padding:10px; background:rgba(255,82,82,0.1); border-radius:6px; margin-bottom:6px;">${m.name}</div>`; });
         html += `</div>`;
       }
       if (low.length > 0) {
         html += `<div style="margin-bottom:20px;"><h4 style="color:#ffc107; margin-bottom:10px;">⚠️ Low Stock (${low.length})</h4>`;
-        low.slice(0,5).forEach(m => {
-          html += `<div style="padding:10px; background:rgba(255,193,7,0.1); border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between;">
-            <span>${m.name}</span><span style="color:#ffc107;">Stock: ${m.stock} (Min: ${m.min})</span></div>`;
-        });
+        low.slice(0,5).forEach(m => { html += `<div style="padding:10px; background:rgba(255,193,7,0.1); border-radius:6px; margin-bottom:6px;">${m.name} (Stock: ${m.stock})</div>`; });
         html += `</div>`;
       }
       if (expiring.length > 0) {
-        html += `<div><h4 style="color:#9c27b0; margin-bottom:10px;">⏰ Expiring Soon (${expiring.length})</h4>`;
+        html += `<div><h4 style="color:#9c27b0; margin-bottom:10px;"> Expiring Soon (${expiring.length})</h4>`;
         expiring.slice(0,5).forEach(m => {
           var days = Math.ceil((new Date(m.expiry) - new Date()) / (1000*60*60*24));
-          html += `<div style="padding:10px; background:rgba(156,39,176,0.1); border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between;">
-            <span>${m.name}</span><span class="badge badge-expiry">${days} days left</span></div>`;
+          html += `<div style="padding:10px; background:rgba(156,39,176,0.1); border-radius:6px; margin-bottom:6px;">${m.name} (${days} days)</div>`;
         });
         html += `</div>`;
       }
@@ -537,7 +475,8 @@
           <div>
             <div style="font-weight:600; font-size:13px;">${m.name}</div>
             <div style="font-size:11px; color:#90a4ae;">Stock: ${m.stock} | PKR ${m.price}</div>
-          </div>          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="addToCart(${m.id})">+ Add</button>
+          </div>
+          <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="addToCart(${m.id})">+ Add</button>
         </div>`;
       });
       document.getElementById('b-results').innerHTML = html;
@@ -549,8 +488,7 @@
       var sub = 0;
       cart.forEach((c, i) => {
         var tot = c.price * c.qty;
-        sub += tot;
-        html += `<div style="padding:10px; background:rgba(255,255,255,0.05); margin-bottom:6px; border-radius:6px;">
+        sub += tot;        html += `<div style="padding:10px; background:rgba(255,255,255,0.05); margin-bottom:6px; border-radius:6px;">
           <div style="display:flex; justify-content:space-between; font-size:13px;">
             <span style="font-weight:600;">${c.name}</span>
             <span style="font-weight:700; color:#00e676;">PKR ${tot}</span>
@@ -586,7 +524,8 @@
             <div style="display:flex; justify-content:space-between;">
               <span style="font-weight:600;">${b.patient}</span>
               <span style="color:#00e676; font-weight:700;">PKR ${b.total}</span>
-            </div>            <div style="font-size:11px; color:#90a4ae; margin-top:4px;">${b.time} • ${b.items.length} items</div>
+            </div>
+            <div style="font-size:11px; color:#90a4ae; margin-top:4px;">${b.time} • ${b.items.length} items</div>
           </div>`;
         });
       }
@@ -598,8 +537,7 @@
       var item = meds.find(m => m.id === id);
       if (!item || item.stock <= 0) { alert('Out of stock!'); return; }
       var ex = cart.find(c => c.id === id);
-      if (ex) {
-        if (ex.qty >= item.stock) { alert('Not enough stock!'); return; }
+      if (ex) {        if (ex.qty >= item.stock) { alert('Not enough stock!'); return; }
         ex.qty++;
       } else {
         cart.push({ ...item, qty: 1 });
@@ -635,7 +573,8 @@
       var bill = {
         id: 'INV-' + Date.now().toString().slice(-6),
         date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),        patient: pName,
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        patient: pName,
         phone: document.getElementById('p-phone').value,
         items: [...cart],
         sub: sub,
@@ -647,8 +586,7 @@
 
       showBill(bill);
       cart = [];
-      document.getElementById('p-name').value = '';
-      document.getElementById('p-phone').value = '';
+      document.getElementById('p-name').value = '';      document.getElementById('p-phone').value = '';
       renderCart();
       renderDash();
       renderBillHistory();
@@ -674,17 +612,15 @@
     }
 
     function closeBillModal() { document.getElementById('bill-modal').classList.remove('active'); }
-    function viewBill(id) {
-      var bill = bills.find(b => b.id === id);
-      if (bill) showBill(bill);
-    }
+    function viewBill(id) { var bill = bills.find(b => b.id === id); if (bill) showBill(bill); }
 
     // --- ADMIN FUNCTIONS ---
     function openAdd() {
       if (currentUserRole !== 'Admin') return;
       editId = null;
       document.getElementById('modal-title').innerText = 'Add Medicine';
-      document.getElementById('m-name').value = '';      document.getElementById('m-cat').value = 'General';
+      document.getElementById('m-name').value = '';
+      document.getElementById('m-cat').value = 'General';
       document.getElementById('m-stock').value = '';
       document.getElementById('m-price').value = '';
       document.getElementById('m-min').value = '20';
@@ -699,8 +635,7 @@
       var m = meds.find(x => x.id === id);
       if (!m) return;
       editId = id;
-      document.getElementById('modal-title').innerText = 'Edit Medicine';
-      document.getElementById('m-name').value = m.name;
+      document.getElementById('modal-title').innerText = 'Edit Medicine';      document.getElementById('m-name').value = m.name;
       document.getElementById('m-cat').value = m.cat;
       document.getElementById('m-stock').value = m.stock;
       document.getElementById('m-price').value = m.price;
@@ -733,7 +668,8 @@
       } else {
         meds.push({ id: Date.now(), name, cat, stock, price, min, expiry, supplier, phone });
       }
-      localStorage.setItem('khan_meds', JSON.stringify(meds));      closeModal();
+      localStorage.setItem('khan_meds', JSON.stringify(meds));
+      closeModal();
       renderDash();
       searchAndRender();
     }
@@ -748,5 +684,4 @@
       }
     }
   </script>
-</body>
-</html>
+</body></html>
