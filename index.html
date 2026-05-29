@@ -1,2333 +1,687 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                /* ========== BASE STYLES ========== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  /* Dark Theme (Default) */
-  --bg-primary: #0f1117;
-  --bg-secondary: #1a1d2e;
-  --bg-tertiary: #252838;
-  --text-primary: #e8eaf6;
-  --text-secondary: #90a4ae;
-  --text-muted: #78909c;
-  --accent-primary: #3d5afe;
-  --accent-secondary: #00bcd4;
-  --success: #00e676;
-  --warning: #ffc107;
-  --danger: #ff5252;
-  --border-color: rgba(255,255,255,0.08);
-  --card-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  --input-bg: #252838;
-}
-
-[data-theme="light"] {
-  --bg-primary: #f5f7fa;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f0f4f8;
-  --text-primary: #1a237e;
-  --text-secondary: #455a64;
-  --text-muted: #78909c;
-  --accent-primary: #3949ab;
-  --accent-secondary: #0097a7;
-  --success: #2e7d32;
-  --warning: #f9a825;
-  --danger: #c62828;
-  --border-color: rgba(0,0,0,0.08);
-  --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  --input-bg: #ffffff;
-}
-
-body {
-  font-family: 'Noto Sans', sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  transition: background 0.3s, color 0.3s;
-  line-height: 1.5;
-}
-
-/* ========== LOADING SCREEN ========== */
-.loading-screen {
-  position: fixed;
-  inset: 0;
-  background: var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.loader {
-  text-align: center;
-  padding: 40px;
-}
-
-.loader-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  animation: bounce 1s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.loader-text {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-.loader-dots {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  background: var(--accent-primary);
-  border-radius: 50%;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes pulse {
-  0%, 100% { transform: scale(0.8); opacity: 0.6; }
-  50% { transform: scale(1.2); opacity: 1; }
-}
-
-/* ========== HEADER ========== */
-.header {
-  background: linear-gradient(90deg, var(--bg-secondary), var(--bg-primary));
-  border-bottom: 1px solid var(--border-color);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.logo {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 15px rgba(61, 90, 254, 0.3);
-}
-
-.brand-name {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: 20px;
-  color: var(--text-primary);
-}
-
-.brand-tagline {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-/* Theme Toggle */
-.theme-toggle {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 8px 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  transition: all 0.2s;
-}
-
-.theme-toggle:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-
-/* Alert Badges */
-.alert-badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.alert-badge.low {
-  background: rgba(255, 193, 7, 0.15);
-  color: var(--warning);
-  border: 1px solid rgba(255, 193, 7, 0.3);
-}
-
-.alert-badge.out {
-  background: rgba(255, 82, 82, 0.15);
-  color: var(--danger);
-  border: 1px solid rgba(255, 82, 82, 0.3);
-}
-
-.alert-badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-/* ========== TABS ========== */
-.tabs-container {
-  display: flex;
-  gap: 6px;
-  padding: 12px 24px;
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-color);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.tabs-container::-webkit-scrollbar { display: none; }
-
-.tab-btn {
-  background: transparent;
-  color: var(--text-secondary);
-  border: none;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tab-btn:hover:not(.active) {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.tab-btn.active {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  box-shadow: 0 4px 15px rgba(61, 90, 254, 0.3);
-}
-
-/* ========== CONTAINER ========== */
-.container {
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: 22px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ========== CARDS ========== */
-.card {
-  background: var(--bg-secondary);
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--card-shadow);
-  overflow: hidden;
-}
-
-.card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-  font-weight: 700;
-  color: var(--text-secondary);
-  font-size: 15px;
-}
-
-.card-body {
-  padding: 20px;
-}
-
-/* ========== BUTTONS ========== */
-.btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(61, 90, 254, 0.4);
-}
-
-.btn-secondary {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: white;
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, var(--danger), #ff1744);
-  color: white;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 13px;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  border-radius: 8px;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* ========== INPUTS ========== */
-.input-group {
-  margin-bottom: 14px;
-}
-
-.input-label {
-  display: block;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.input {
-  width: 100%;
-  background: var(--input-bg);
-  border: 1.5px solid var(--border-color);
-  border-radius: 10px;
-  padding: 10px 14px;
-  color: var(--text-primary);
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(61, 90, 254, 0.2);
-}
-
-.input::placeholder {
-  color: var(--text-muted);
-}
-
-.search-box {
-  position: relative;
-  max-width: 320px;
-}
-
-.search-box .input {
-  padding-left: 40px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 16px;
-}
-
-/* ========== TABLES ========== */
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-th {
-  background: var(--bg-tertiary);
-  color: var(--accent-primary);
-  font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 12px 14px;
-  text-align: left;
-  position: sticky;
-  top: 0;
-}
-
-td {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-tr:hover td {
-  background: var(--bg-tertiary);
-}
-
-/* ========== BADGES ========== */
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.badge-ok { background: rgba(0, 230, 118, 0.15); color: var(--success); }
-.badge-low { background: rgba(255, 193, 7, 0.15); color: var(--warning); }
-.badge-out { background: rgba(255, 82, 82, 0.15); color: var(--danger); }
-.badge-expiry { background: rgba(156, 39, 176, 0.15); color: #9c27b0; }
-
-.category-badge {
-  background: rgba(0, 188, 212, 0.15);
-  color: var(--accent-secondary);
-  border-radius: 6px;
-  padding: 3px 10px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* ========== NOTIFICATIONS ========== */
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 2000;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: slideIn 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  max-width: 350px;
-}
-
-.notification.success {
-  background: var(--success);
-  color: white;
-}
-
-.notification.error {
-  background: var(--danger);
-  color: white;
-}
-
-.notification.warning {
-  background: var(--warning);
-  color: #1a237e;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-/* ========== MODALS ========== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-}
-
-.modal {
-  background: var(--bg-secondary);
-  border-radius: 20px;
-  padding: 28px;
-  width: 100%;
-  max-width: 560px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: 20px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-  justify-content: flex-end;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.form-grid .full-width {
-  grid-column: 1 / -1;
-}
-
-/* ========== DASHBOARD STATS ========== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, var(--c1), var(--c2));
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: var(--card-shadow);
-  transition: transform 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-3px);
-}
-
-.stat-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.stat-value {
-  font-family: 'Baloo 2', cursive;
-  font-size: 26px;
-  font-weight: 800;
-  margin: 4px 0;
-}
-
-.stat-label {
-  font-size: 12px;
-  opacity: 0.9;
-  font-weight: 500;
-}
-
-/* ========== CART ========== */
-.cart-sidebar {
-  position: sticky;
-  top: 100px;
-  height: fit-content;
-}
-
-.cart-title {
-  font-family: 'Baloo 2', cursive;
-  font-weight: 800;
-  font-size: 18px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cart-item {
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 10px;
-}
-
-.cart-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-}
-
-.cart-item-name {
-  font-weight: 600;
-  font-size: 14px;
-  flex: 1;
-}
-
-.cart-qty-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.qty-btn {
-  width: 28px;
-  height: 28px;
-  background: var(--accent-primary);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.qty-btn:hover { background: var(--accent-secondary); }
-
-.qty-display {
-  font-weight: 700;
-  min-width: 24px;
-  text-align: center;
-  font-size: 15px;
-}
-
-.cart-total-section {
-  border-top: 1px solid var(--border-color);
-  margin-top: 16px;
-  padding-top: 16px;
-}
-
-.cart-total-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: var(--text-secondary);
-}
-
-.cart-grand-total {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 800;
-  font-size: 18px;
-  margin-top: 8px;
-  color: var(--success);
-}
-
-/* ========== BILL PREVIEW ========== */
-.bill-preview {
-  background: white !important;
-  color: #000 !important;
-  border-radius: 16px;
-  padding: 30px;
-  width: 100%;
-  max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.bill-header {
-  text-align: center;
-  margin-bottom: 20px;
-  border-bottom: 2px dashed #ccc;
-  padding-bottom: 16px;
-}
-
-.bill-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 24px;
-  font-weight: 800;
-  color: #1a237e;
-  margin: 8px 0;
-}
-
-.bill-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.bill-table {
-  width: 100%;
-  font-size: 14px;
-  margin-bottom: 16px;
-  border-collapse: collapse;
-}
-
-.bill-table th {
-  background: #f0f4ff;
-  padding: 10px 8px;
-  text-align: left;
-  font-weight: 700;
-  color: #1a237e;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.bill-table td {
-  padding: 9px 8px;
-  border-bottom: 1px solid #eee;
-  color: #333;
-}
-
-.bill-total {
-  border-top: 2px solid #1a237e;
-  padding-top: 12px;
-  font-size: 14px;
-}
-
-.bill-total-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.bill-grand-total {
-  font-weight: 800;
-  font-size: 18px;
-  color: #1a237e;
-  border-top: 1px solid #ccc;
-  padding-top: 10px;
-  margin-top: 8px;
-}
-
-.bill-footer {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-}
-
-.bill-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-  justify-content: center;
-}
-
-/* ========== IMPORT/EXPORT SECTION ========== */
-.import-export-section {
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.import-export-section .btn {
-  font-size: 13px;
-  padding: 8px 16px;
-}
-
-.file-input-wrapper {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-}
-
-.file-input-wrapper input[type=file] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-}
-
-/* ========== EMPTY STATES ========== */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-muted);
-}
-
-.empty-state-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  opacity: 0.7;
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 900px) {
-  .billing-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .cart-sidebar {
-    position: static !important;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  .header {
-    padding: 0 16px;
-  }
-  .container {
-    padding: 16px;
-  }
-  .tabs-container {
-    padding: 12px 16px;
-  }
-}
-
-@media print {
-  .no-print { display: none !important; }
-  body { background: white; color: black; }
-  .bill-preview { 
-    background: white !important; 
-    color: black !important; 
-    box-shadow: none;
-    max-width: 100%;
-  }
-}
-
-/* ========== UTILITIES ========== */
-.text-center { text-align: center; }
-.mt-1 { margin-top: 8px; }
-.mt-2 { margin-top: 16px; }
-.mb-1 { margin-bottom: 8px; }
-.mb-2 { margin-bottom: 16px; }
-.flex { display: flex; }
-.flex-wrap { flex-wrap: wrap; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-2 { gap: 12px; }
-.font-bold { font-weight: 700; }
-.text-success { color: var(--success); }
-.text-warning { color: var(--warning); }
-.text-danger { color: var(--danger); }
-.hidden { display: none; }
-
-
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos - Medical Inventory System</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Google Fonts - with fallback -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>Khan Medicos Pro - Fixed Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f1117; 
+      color: #e8eaf6;
+      min-height: 100vh;
+    }
+    /* Login Screen */
+    .login-container {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #1a1d2e, #0f1117);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: #1a1d2e; padding: 40px; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 90%; max-width: 400px; text-align: center;
+    }
+    .login-logo { font-size: 48px; margin-bottom: 16px; }
+    .login-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .login-sub { color: #90a4ae; margin-bottom: 24px; }
+    .input {
+      width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 12px; color: white; margin-bottom: 16px; font-size: 16px;
+    }
+    .btn-login {
+      width: 100%; background: linear-gradient(90deg, #3d5afe, #00bcd4);
+      color: white; border: none; padding: 14px; border-radius: 8px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+    }
+    .btn-login:hover { opacity: 0.9; }
+    .error-msg { color: #ff5252; font-size: 14px; margin-top: 8px; display: none; }
+    .demo-info {
+      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;
+      margin-top: 20px; font-size: 13px; color: #90a4ae; text-align: left;
+    }
+    
+    /* Main App Styles */
+    .header {
+      background: #1a1d2e; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #3d5afe, #00bcd4); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .brand-name { font-weight: 700; font-size: 18px; }
+    .header-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .select, .btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-size: 13px; }
+    .btn { background: linear-gradient(135deg, #3d5afe, #00bcd4); border: none; font-weight: 600; }
+    .btn-secondary { background: rgba(255,255,255,0.1); }
+    .btn-danger { background: linear-gradient(135deg, #ff5252, #ff1744); }
+    .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 8px; }
+    .tab { background: rgba(255,255,255,0.05); border: none; color: #90a4ae; padding: 10px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-weight: 600; transition: all 0.2s; }
+    .tab:hover { background: rgba(255,255,255,0.1); }
+    .tab.active { background: linear-gradient(135deg, #3d5afe, #00bcd4); color: white; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: linear-gradient(135deg, #1a237e, #283593); border-radius: 12px; padding: 16px; text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; margin: 8px 0; }
+    .stat-label { font-size: 12px; opacity: 0.8; }
+    .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { color: #90caf9; font-size: 12px; text-transform: uppercase; font-weight: 600; }
+    tr:hover td { background: rgba(61,90,254,0.05); }
+    .badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
+    .badge-ok { background: rgba(0,230,118,0.2); color: #00e676; }
+    .badge-low { background: rgba(255,193,7,0.2); color: #ffc107; }
+    .badge-out { background: rgba(255,82,82,0.2); color: #ff5252; }
+    .notification { position: fixed; top: 20px; right: 20px; background: #1b5e20; color: white; padding: 12px 20px; border-radius: 8px; z-index: 1000; animation: slideIn 0.3s ease; max-width: 350px; }
+    .notification.error { background: #b71c1c; }
+    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .modal.active { display: flex; }
+    .modal-content { background: #1a1d2e; border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .full-width { grid-column: 1 / -1; }
+    .cart-item { background: #252838; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .qty-btn { width: 28px; height: 28px; background: #3d5afe; border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 700; }
+    .chart-bar { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+    .chart-label { width: 100px; font-size: 13px; color: #90a4ae; }
+    .chart-fill { flex: 1; height: 24px; background: rgba(61,90,254,0.2); border-radius: 6px; overflow: hidden; position: relative; }
+    .chart-value { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #3d5afe, #00bcd4); border-radius: 6px; }
+    .chart-text { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; }
+    .hidden { display: none !important; }
+    @media print { .no-print { display: none !important; } .bill-preview { box-shadow: none; max-width: 100%; background: white !important; } }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <!-- Loading State -->
-    <div id="loading" class="loading-screen">
-      <div class="loader">
-        <div class="loader-icon">💊</div>
-        <div class="loader-text">Khan Medicos Loading...</div>
-        <div class="loader-dots">
-          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </div>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-container">
+    <div class="login-box">
+      <div class="login-logo">💊</div>      <div class="login-title">Khan Medicos Pro</div>
+      <div class="login-sub">Medical Inventory System</div>
+      
+      <input type="text" id="login-user" class="input" placeholder="Username (admin)" value="admin">
+      <input type="password" id="login-pass" class="input" placeholder="Password (admin123)" value="admin123">
+      
+      <button class="btn-login" onclick="handleLogin()"> Login</button>
+      <div id="login-error" class="error-msg"></div>
+      
+      <div class="demo-info">
+        <strong>Demo Accounts:</strong><br>
+        Admin: admin / admin123<br>
+        Staff: staff / staff123
       </div>
     </div>
-
-    <!-- App Content (loaded via JS) -->
-    <div id="main-app" style="display:none;"></div>
   </div>
 
-  <!-- React & ReactDOM (with error handling) -->
-  <script>
-    // Fallback if CDN fails
-    function loadScript(url, callback) {
-      const script = document.createElement('script');
-      script.src = url;
-      script.onload = () => callback(null, script);
-      script.onerror = () => callback(new Error(`Failed to load: ${url}`), script);
-      document.head.appendChild(script);
-    }
-
-    // Load React first
-    loadScript('https://unpkg.com/react@18/umd/react.production.min.js', (err) => {
-      if (err) {
-        document.getElementById('loading').innerHTML = `
-          <div style="color:#ff5252;text-align:center;padding:40px;">
-            <h3>⚠️ Failed to load React</h3>
-            <p>Please check your internet connection or try refreshing.</p>
-            <button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:#3d5afe;color:white;border:none;border-radius:8px;cursor:pointer;">Retry</button>
-          </div>
-        `;
-        return;
-      }
-      // Then load ReactDOM
-      loadScript('https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', (err) => {
-        if (err) {
-          document.getElementById('loading').innerHTML = `
-            <div style="color:#ff5252;text-align:center;padding:40px;">
-              <h3>⚠️ Failed to load ReactDOM</h3>
-              <p>Please check your internet connection.</p>
-              <button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:#3d5afe;color:white;border:none;border-radius:8px;cursor:pointer;">Retry</button>
-            </div>
-          `;
-          return;
-        }
-        // Then load Babel for JSX
-        loadScript('https://unpkg.com/@babel/standalone/babel.min.js', (err) => {
-          if (err) {
-            document.getElementById('loading').innerHTML = `
-              <div style="color:#ff5252;text-align:center;padding:40px;">
-                <h3>⚠️ Failed to load Babel</h3>
-                <p>Trying fallback mode...</p>
-              </div>
-            `;
-            // Try to load app.js anyway - it has vanilla JS fallback
-            loadApp();
-            return;
-          }
-          // All loaded successfully
-          loadApp();
-        });
-      });
-    });
-
-    function loadApp() {
-      const script = document.createElement('script');
-      script.src = 'app.js';
-      script.type = 'text/babel';
-      script.onload = () => {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-      };
-      script.onerror = () => {
-        document.getElementById('loading').innerHTML = `
-          <div style="color:#ff5252;text-align:center;padding:40px;">
-            <h3>⚠️ Failed to load application</h3>
-            <p>Please ensure all files are in the correct folder.</p>
-          </div>
-        `;
-      };
-      document.body.appendChild(script);
-    }
-  </script>
-</body>
-</html>
-
-
-
-              <script>
-                              // ========== CONFIG ==========
-const API_BASE = 'http://localhost:3000/api';
-const USE_BACKEND = true; // Set to false for localStorage-only mode
-
-// ========== STATE MANAGEMENT ==========
-let state = {
-  inventory: [],
-  cart: [],
-  bills: [],
-  orders: [],
-  activeTab: 'Dashboard',
-  searchTerm: '',
-  patientName: '',
-  patientPhone: '',
-  orderQty: {},
-  showBillPreview: null,
-  showAddModal: false,
-  showImportModal: false,
-  newMed: { name: '', category: 'Tablet', stock: '', price: '', supplier: '', supplierPhone: '', minStock: '', expiry: '' },
-  editId: null,
-  notification: null,
-  theme: localStorage.getItem('theme') || 'dark',
-  categoryFilter: 'All'
-};
-
-// ========== API HELPERS ==========
-async function apiRequest(endpoint, options = {}) {
-  if (!USE_BACKEND) {
-    return { success: false, error: 'Backend not enabled' };
-  }
-  
-  try {
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      headers: { 'Content-Type': 'application/json', ...options.headers },
-      ...options
-    });
-    const data = await response.json();
-    return { success: response.ok, data, error: data.error };
-  } catch (error) {
-    console.error('API Error:', error);
-    return { success: false, error: 'Network error - using offline mode' };
-  }
-}
-
-// ========== LOCAL STORAGE FALLBACK ==========
-const Storage = {
-  get(key, defaultValue) {
-    try {
-      const item = localStorage.getItem(`khanMedicos_${key}`);
-      return item ? JSON.parse(item) : defaultValue;
-    } catch {
-      return defaultValue;
-    }
-  },
-  set(key, value) {
-    try {
-      localStorage.setItem(`khanMedicos_${key}`, JSON.stringify(value));
-    } catch (e) {
-      console.error('Storage error:', e);
-    }
-  }
-};
-
-// ========== INITIAL DATA ==========
-const initialInventory = [
-  { id: 1, name: "Paracetamol 500mg", category: "Tablet", stock: 200, price: 2.5, supplier: "Sun Pharma", supplierPhone: "9876543210", minStock: 50, expiry: "2026-12-31" },
-  { id: 2, name: "Amoxicillin 250mg", category: "Capsule", stock: 30, price: 8.0, supplier: "Cipla", supplierPhone: "9123456789", minStock: 40, expiry: "2026-08-15" },
-  { id: 3, name: "Omeprazole 20mg", category: "Capsule", stock: 5, price: 5.5, supplier: "Dr. Reddy's", supplierPhone: "9988776655", minStock: 30, expiry: "2027-01-20" },
-  { id: 4, name: "Cetirizine 10mg", category: "Tablet", stock: 150, price: 3.0, supplier: "Mankind Pharma", supplierPhone: "9871234567", minStock: 40, expiry: "2026-11-10" },
-  { id: 5, name: "Metformin 500mg", category: "Tablet", stock: 0, price: 4.0, supplier: "Sun Pharma", supplierPhone: "9876543210", minStock: 50, expiry: "2027-03-05" },
-  { id: 6, name: "Azithromycin 500mg", category: "Tablet", stock: 60, price: 15.0, supplier: "Cipla", supplierPhone: "9123456789", minStock: 20, expiry: "2026-09-30" },
-  { id: 7, name: "Atorvastatin 10mg", category: "Tablet", stock: 90, price: 7.0, supplier: "Lupin", supplierPhone: "9765432100", minStock: 30, expiry: "2027-02-28" },
-  { id: 8, name: "Pantoprazole 40mg", category: "Tablet", stock: 12, price: 6.5, supplier: "Zydus Cadila", supplierPhone: "9654321098", minStock: 25, expiry: "2026-10-15" },
-];
-
-// ========== APP INITIALIZATION ==========
-async function initApp() {
-  // Apply theme
-  document.documentElement.setAttribute('data-theme', state.theme);
-  
-  // Load data from backend or localStorage
-  if (USE_BACKEND) {
-    await loadFromBackend();
-  } else {
-    loadFromLocalStorage();
-  }
-  
-  // Render app
-  render();
-  
-  // Setup event listeners
-  setupEventListeners();
-}
-
-async function loadFromBackend() {
-  const [medsRes, billsRes, ordersRes] = await Promise.all([
-    apiRequest('/medicines'),
-    apiRequest('/bills'),
-    apiRequest('/orders')
-  ]);
-  
-  if (medsRes.success) state.inventory = medsRes.data;
-  else state.inventory = Storage.get('inventory', initialInventory);
-  
-  if (billsRes.success) state.bills = billsRes.data;
-  else state.bills = Storage.get('bills', []);
-  
-  if (ordersRes.success) state.orders = ordersRes.data;
-  else state.orders = Storage.get('orders', []);
-}
-
-function loadFromLocalStorage() {
-  state.inventory = Storage.get('inventory', initialInventory);
-  state.bills = Storage.get('bills', []);
-  state.orders = Storage.get('orders', []);
-}
-
-function saveToStorage() {
-  Storage.set('inventory', state.inventory);
-  Storage.set('bills', state.bills);
-  Storage.set('orders', state.orders);
-}
-
-// ========== NOTIFICATION SYSTEM ==========
-function showNotification(msg, type = 'success') {
-  state.notification = { msg, type };
-  render();
-  setTimeout(() => {
-    state.notification = null;
-    render();
-  }, 3000);
-}
-
-// ========== CORE FUNCTIONS ==========
-const getLowStockItems = () => state.inventory.filter(i => i.stock <= i.minStock);
-const getOutOfStock = () => state.inventory.filter(i => i.stock === 0);
-const getExpiringSoon = () => {
-  const soon = new Date();
-  soon.setMonth(soon.getMonth() + 1);
-  return state.inventory.filter(i => new Date(i.expiry) <= soon && new Date(i.expiry) > new Date());
-};
-
-const filteredInventory = () => {
-  let items = state.inventory;
-  
-  // Search filter
-  if (state.searchTerm) {
-    const term = state.searchTerm.toLowerCase();
-    items = items.filter(i => 
-      i.name.toLowerCase().includes(term) || 
-      i.category.toLowerCase().includes(term)
-    );
-  }
-  
-  // Category filter
-  if (state.categoryFilter !== 'All') {
-    items = items.filter(i => i.category === state.categoryFilter);
-  }
-  
-  return items;
-};
-
-// ========== CART FUNCTIONS ==========
-function addToCart(item) {
-  if (item.stock === 0) {
-    showNotification("Yeh dawai stock mein nahi hai!", "error");
-    return;
-  }
-  
-  const existing = state.cart.find(c => c.id === item.id);
-  if (existing) {
-    if (existing.qty >= item.stock) {
-      showNotification("Itni quantity stock mein nahi hai!", "error");
-      return;
-    }
-    state.cart = state.cart.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c);
-  } else {
-    state.cart = [...state.cart, { ...item, qty: 1 }];
-  }
-  showNotification(`${item.name} cart mein add ho gaya!`);
-  render();
-}
-
-function removeFromCart(id) {
-  state.cart = state.cart.filter(c => c.id !== id);
-  render();
-}
-
-function updateCartQty(id, qty) {
-  const item = state.inventory.find(i => i.id === id);
-  if (qty > item.stock) {
-    showNotification("Stock mein itni quantity nahi!", "error");
-    return;
-  }
-  if (qty <= 0) {
-    removeFromCart(id);
-    return;
-  }
-  state.cart = state.cart.map(c => c.id === id ? { ...c, qty } : c);
-  render();
-}
-
-const getCartTotals = () => {
-  const subtotal = state.cart.reduce((s, c) => s + c.price * c.qty, 0);
-  const gst = subtotal * 0.05;
-  return { subtotal, gst, total: subtotal + gst };
-};
-
-// ========== BILLING ==========
-function generateBill() {
-  if (!state.patientName) {
-    showNotification("Patient ka naam daalna zaroori hai!", "error");
-    return;
-  }
-  if (state.cart.length === 0) {
-    showNotification("Cart mein koi item nahi!", "error");
-    return;
-  }
-  
-  const { subtotal, gst, total } = getCartTotals();
-  const bill = {
-    id: `BILL-${Date.now()}`,
-    date: new Date().toLocaleString("hi-IN"),
-    patient: state.patientName,
-    phone: state.patientPhone,
-    items: [...state.cart],
-    subtotal, gst, total,
-  };
-  
-  // Update stock
-  state.inventory = state.inventory.map(i => {
-    const cartItem = state.cart.find(c => c.id === i.id);
-    return cartItem ? { ...i, stock: i.stock - cartItem.qty } : i;
-  });
-  
-  state.bills = [bill, ...state.bills];
-  state.cart = [];
-  state.patientName = '';
-  state.patientPhone = '';
-  state.showBillPreview = bill;
-  
-  // Save
-  if (USE_BACKEND) {
-    apiRequest('/bills', { method: 'POST', body: JSON.stringify(bill) });
-    state.inventory.forEach(i => apiRequest(`/medicines/${i.id}`, { method: 'PUT', body: JSON.stringify(i) }));
-  } else {
-    saveToStorage();
-  }
-  
-  showNotification("Bill successfully generate ho gaya!");
-  render();
-}
-
-function printBill() {
-  setTimeout(() => window.print(), 100);
-}
-
-// ========== INVENTORY MANAGEMENT ==========
-function saveMedicine() {
-  if (!state.newMed.name || !state.newMed.price || !state.newMed.stock) {
-    showNotification("Saari zaruri fields bharo!", "error");
-    return;
-  }
-  
-  const medData = {
-    ...state.newMed,
-    price: +state.newMed.price,
-    stock: +state.newMed.stock,
-    minStock: +state.newMed.minStock || 0
-  };
-  
-  if (state.editId) {
-    // Update existing
-    state.inventory = state.inventory.map(i => 
-      i.id === state.editId ? { ...i, ...medData, id: state.editId } : i
-    );
-    showNotification("Dawai update ho gayi!");
-  } else {
-    // Add new
-    const newId = Date.now();
-    state.inventory = [...state.inventory, { ...medData, id: newId }];
-    showNotification("Nayi dawai add ho gayi!");
-  }
-  
-  // Save
-  if (USE_BACKEND) {
-    const endpoint = state.editId ? `/medicines/${state.editId}` : '/medicines';
-    const method = state.editId ? 'PUT' : 'POST';
-    apiRequest(endpoint, { method, body: JSON.stringify({ ...medData, id: state.editId || Date.now() }) });
-  } else {
-    saveToStorage();
-  }
-  
-  // Reset form
-  state.showAddModal = false;
-  state.newMed = { name: '', category: 'Tablet', stock: '', price: '', supplier: '', supplierPhone: '', minStock: '', expiry: '' };
-  state.editId = null;
-  render();
-}
-
-function openEdit(item) {
-  state.editId = item.id;
-  state.newMed = { ...item };
-  state.showAddModal = true;
-  render();
-}
-
-function deleteMedicine(id) {
-  if (!confirm("Kya aap is dawai ko delete karna chahte hain?")) return;
-  
-  state.inventory = state.inventory.filter(i => i.id !== id);
-  
-  if (USE_BACKEND) {
-    apiRequest(`/medicines/${id}`, { method: 'DELETE' });
-  } else {
-    saveToStorage();
-  }
-  
-  showNotification("Dawai delete ho gayi!");
-  render();
-}
-
-// ========== IMPORT/EXPORT FUNCTIONS ==========
-function exportMedicines(format = 'json') {
-  if (format === 'json') {
-    const data = JSON.stringify(state.inventory, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    downloadFile(blob, 'Khan_Medicos_Medicines.json');
-  } else if (format === 'csv') {
-    const headers = ['ID', 'Name', 'Category', 'Stock', 'Price', 'Supplier', 'Phone', 'MinStock', 'Expiry', 'Status'];
-    const rows = state.inventory.map(i => [
-      i.id, i.name, i.category, i.stock, i.price, i.supplier, i.supplierPhone, i.minStock, i.expiry,
-      i.stock === 0 ? 'OUT' : i.stock <= i.minStock ? 'LOW' : 'OK'
-    ]);
-    let csv = headers.join(',') + '\n';
-    rows.forEach(r => csv += r.map(v => `"${v}"`).join(',') + '\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    downloadFile(blob, 'Khan_Medicos_Medicines.csv');
-  }
-  showNotification(`${format.toUpperCase()} file download ho rahi hai!`);
-}
-
-function importMedicines(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const content = e.target.result;
-      let imported = [];
-      
-      if (file.name.endsWith('.json')) {
-        imported = JSON.parse(content);
-      } else if (file.name.endsWith('.csv')) {
-        // Simple CSV parser
-        const lines = content.split('\n').filter(l => l.trim());
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-        imported = lines.slice(1).map(line => {
-          const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-          const obj = {};
-          headers.forEach((h, i) => {
-            if (h === 'Stock' || h === 'Price' || h === 'MinStock' || h === 'ID') {
-              obj[h.toLowerCase()] = +values[i] || 0;
-            } else {
-              obj[h.toLowerCase()] = values[i];
-            }
-          });
-          return obj;
-        });
-      }
-      
-      if (!Array.isArray(imported) || imported.length === 0) {
-        throw new Error('Invalid file format');
-      }
-      
-      // Merge with existing (avoid duplicates by ID)
-      const existingIds = new Set(state.inventory.map(i => i.id));
-      const newItems = imported.filter(i => !existingIds.has(i.id)).map(i => ({
-        ...i,
-        id: i.id || Date.now() + Math.random(),
-        stock: +i.stock || 0,
-        price: +i.price || 0,
-        minStock: +i.minStock || 0
-      }));
-      
-      state.inventory = [...state.inventory, ...newItems];
-      
-      if (USE_BACKEND) {
-        newItems.forEach(item => apiRequest('/medicines', { method: 'POST', body: JSON.stringify(item) }));
-      } else {
-        saveToStorage();
-      }
-      
-      showNotification(`${newItems.length} medicines import ho gayi!`);
-      state.showImportModal = false;
-      render();
-    } catch (error) {
-      showNotification("Import failed: " + error.message, "error");
-      console.error('Import error:', error);
-    }
-  };
-  reader.readAsText(file);
-}
-
-function downloadFile(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// ========== ORDERS ==========
-function placeOrder() {
-  const orderItems = getLowStockItems().filter(i => state.orderQty[i.id] && state.orderQty[i.id] > 0);
-  if (orderItems.length === 0) {
-    showNotification("Koi item select nahi kiya order ke liye!", "error");
-    return;
-  }
-  
-  const order = {
-    id: `ORD-${Date.now()}`,
-    date: new Date().toLocaleString("hi-IN"),
-    status: "Placed",
-    items: orderItems.map(i => ({ ...i, orderQty: state.orderQty[i.id] })),
-  };
-  
-  state.orders = [order, ...state.orders];
-  state.orderQty = {};
-  
-  if (USE_BACKEND) {
-    apiRequest('/orders', { method: 'POST', body: JSON.stringify(order) });
-  } else {
-    saveToStorage();
-  }
-  
-  showNotification(`Order ${order.id} successfully place ho gaya!`);
-  render();
-}
-
-// ========== THEME TOGGLE ==========
-function toggleTheme() {
-  state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', state.theme);
-  localStorage.setItem('theme', state.theme);
-  render();
-}
-
-// ========== RENDER FUNCTIONS ==========
-function render() {
-  const app = document.getElementById('main-app');
-  if (!app) return;
-  
-  app.innerHTML = `
-    ${renderHeader()}
-    ${renderTabs()}
-    <div class="container">
-      ${renderContent()}
-    </div>
-    ${renderModals()}
-    ${renderNotification()}
-    <div class="footer-note no-print">
-      © ${new Date().getFullYear()} Khan Medicos • Medical Inventory System • 
-      <span style="cursor:pointer;color:var(--accent-primary)" onclick="toggleTheme()">🌓 Theme Toggle</span>
-    </div>
-  `;
-  
-  // Re-attach event listeners after render
-  setupEventListeners();
-}
-
-function renderHeader() {
-  const lowStock = getLowStockItems().length;
-  const outOfStock = getOutOfStock().length;
-  
-  return `
-    <header class="header no-print">
-      <div class="header-left">
+  <!-- Main App -->
+  <div id="app" style="display: none;">
+    <div class="header">
+      <div class="brand">
         <div class="logo">💊</div>
         <div>
-          <div class="brand-name">Khan Medicos</div>
-          <div class="brand-tagline">Trusted Since 1995</div>
+          <div class="brand-name">Khan Medicos Pro</div>
+          <div style="font-size:11px;color:#90a4ae" id="user-info">Welcome</div>
         </div>
       </div>
-      <div class="header-right">
-        <button class="theme-toggle" onclick="toggleTheme()">
-          ${state.theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
-        </button>
-        ${lowStock > 0 ? `<div class="alert-badge low" onclick="state.activeTab='Low Stock Alert';render()">🔴 ${lowStock} Low</div>` : ''}
-        ${outOfStock > 0 ? `<div class="alert-badge out" onclick="state.activeTab='Low Stock Alert';render()">⚠️ ${outOfStock} Out</div>` : ''}
-      </div>
-    </header>
-  `;
-}
-
-function renderTabs() {
-  const tabs = [
-    { id: 'Dashboard', icon: '📊', label: 'Dashboard' },
-    { id: 'Inventory', icon: '💊', label: 'Inventory' },
-    { id: 'Billing', icon: '🧾', label: 'Billing' },
-    { id: 'Orders', icon: '📦', label: 'Orders' },
-    { id: 'Low Stock Alert', icon: getLowStockItems().length > 0 ? '⚠️' : '✅', label: 'Low Stock' + (getLowStockItems().length > 0 ? ` (${getLowStockItems().length})` : '') }
-  ];
-  
-  return `
-    <nav class="tabs-container no-print">
-      ${tabs.map(t => `
-        <button class="tab-btn ${state.activeTab === t.id ? 'active' : ''}" onclick="state.activeTab='${t.id}';render()">
-          ${t.icon} ${t.label}
-        </button>
-      `).join('')}
-    </nav>
-  `;
-}
-
-function renderContent() {
-  switch(state.activeTab) {
-    case 'Dashboard': return renderDashboard();
-    case 'Inventory': return renderInventory();
-    case 'Billing': return renderBilling();
-    case 'Orders': return renderOrders();
-    case 'Low Stock Alert': return renderLowStock();
-    default: return renderDashboard();
-  }
-}
-
-function renderDashboard() {
-  const totalValue = state.inventory.reduce((s, i) => s + i.stock * i.price, 0);
-  const lowStock = getLowStockItems();
-  const expiring = getExpiringSoon();
-  
-  return `
-    <div class="section-title">📊 Dashboard</div>
-    
-    <div style="background:linear-gradient(135deg,#1a237e,#283593);border-radius:16px;padding:20px;margin-bottom:24px;display:flex;align-items:center;gap:16px">
-      <div style="font-size:32px;background:rgba(255,255,255,0.15);width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center">🏥</div>
-      <div>
-        <div style="font-family:'Baloo 2';font-weight:800;font-size:20px;margin-bottom:4px">Welcome to Khan Medicos</div>
-        <div style="font-size:14px;opacity:0.9;max-width:500px">Manage inventory, billing & orders efficiently. Never run out of essential medicines!</div>
-      </div>
-    </div>
-    
-    <div class="stats-grid">
-      ${[
-        { label: "Kul Dawaiyan", val: state.inventory.length, icon: "💊", c1: "#1a237e", c2: "#283593" },
-        { label: "Stock Value", val: `₹${totalValue.toFixed(0)}`, icon: "💰", c1: "#1b5e20", c2: "#2e7d32" },
-        { label: "Low Stock", val: lowStock.length, icon: "⚠️", c1: "#e65100", c2: "#f57c00" },
-        { label: "Out of Stock", val: getOutOfStock().length, icon: "🚫", c1: "#b71c1c", c2: "#c62828" },
-        { label: "Expiring Soon", val: expiring.length, icon: "⏰", c1: "#7b1fa2", c2: "#9c27b0" },
-        { label: "Total Bills", val: state.bills.length, icon: "🧾", c1: "#4a148c", c2: "#6a1b9a" },
-      ].map(s => `
-        <div class="stat-card" style="--c1:${s.c1};--c2:${s.c2}">
-          <div class="stat-icon">${s.icon}</div>
-          <div class="stat-value">${s.val}</div>
-          <div class="stat-label">${s.label}</div>
-        </div>
-      `).join('')}
-    </div>
-    
-    ${lowStock.length > 0 ? `
-      <div class="card" style="border-left:4px solid var(--danger);margin-bottom:20px">
-        <div class="card-header" style="color:var(--danger);font-weight:700">🔴 Urgent — Inhe abhi order karo!</div>
-        <div class="table-container">
-          <table>
-            <thead><tr><th>Dawai</th><th>Stock</th><th>Min</th><th>Supplier</th><th>Phone</th></tr></thead>
-            <tbody>
-              ${lowStock.slice(0, 5).map(i => `
-                <tr>
-                  <td style="font-weight:600">${i.name}</td>
-                  <td><span class="badge ${i.stock===0?'badge-out':'badge-low'}">${i.stock}</span></td>
-                  <td>${i.minStock}</td>
-                  <td>${i.supplier}</td>
-                  <td><a href="tel:${i.supplierPhone}" style="color:var(--accent-secondary)">${i.supplierPhone}</a></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    ` : ''}
-    
-    ${expiring.length > 0 ? `
-      <div class="card" style="border-left:4px solid #9c27b0">
-        <div class="card-header" style="color:#9c27b0;font-weight:700">⏰ Expiring Soon (Next 30 Days)</div>
-        <div class="table-container">
-          <table>
-            <thead><tr><th>Dawai</th><th>Expiry</th><th>Stock</th><th>Action</th></tr></thead>
-            <tbody>
-              ${expiring.slice(0, 5).map(i => `
-                <tr>
-                  <td style="font-weight:600">${i.name}</td>
-                  <td><span class="badge badge-expiry">${i.expiry}</span></td>
-                  <td>${i.stock}</td>
-                  <td><button class="btn btn-sm btn-secondary" onclick="state.activeTab='Inventory';state.searchTerm='${i.name}';render()">View</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    ` : ''}
-  `;
-}
-
-function renderInventory() {
-  const categories = ['All', ...new Set(state.inventory.map(i => i.category))];
-  
-  return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-      <div class="section-title">💊 Inventory</div>
-      <div class="flex flex-wrap gap-2">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input class="input" placeholder="Search..." value="${state.searchTerm}" oninput="state.searchTerm=this.value;render()">
-        </div>
-        <select class="input" style="width:auto" onchange="state.categoryFilter=this.value;render()">
-          ${categories.map(c => `<option value="${c}" ${state.categoryFilter===c?'selected':''}>${c}</option>`).join('')}
+      <div class="header-controls">
+        <select class="select" id="store-select" onchange="changeStore()">
+          <option>Main Branch</option>
+          <option>City Center</option>
+          <option>Airport Road</option>
+          <option>Gulberg</option>
         </select>
-        <button class="btn btn-primary" onclick="state.showAddModal=true;state.editId=null;state.newMed={name:'',category:'Tablet',stock:'',price:'',supplier:'',supplierPhone:'',minStock:'',expiry:''};render()">+ Add Medicine</button>
-        <button class="btn btn-secondary" onclick="exportMedicines('csv')">📥 CSV Export</button>
-        <button class="btn btn-secondary" onclick="exportMedicines('json')">📦 JSON Export</button>
-        <button class="btn btn-secondary" onclick="state.showImportModal=true;render()">📤 Import</button>
+        <button class="btn btn-secondary" onclick="toggleTheme()">🌓 Theme</button>
+        <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
       </div>
     </div>
     
-    <div class="card">
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Medicine</th><th>Category</th><th>Stock</th><th>Price</th><th>Supplier</th><th>Expiry</th><th>Status</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filteredInventory().map(item => `
-              <tr>
-                <td style="font-weight:600">${item.name}</td>
-                <td><span class="category-badge">${item.category}</span></td>
-                <td style="font-weight:700;color:${item.stock===0?'var(--danger)':item.stock<=item.minStock?'var(--warning)':'var(--success)'}">${item.stock}</td>
-                <td>₹${item.price.toFixed(2)}</td>
-                <td>${item.supplier}</td>
-                <td style="color:var(--text-muted);font-size:13px">${item.expiry}</td>
-                <td>
-                  ${item.stock===0 ? '<span class="badge badge-out">Out</span>' : item.stock<=item.minStock ? '<span class="badge badge-low">Low</span>' : '<span class="badge badge-ok">OK</span>'}
-                </td>
-                <td class="flex gap-2">
-                  <button class="btn btn-sm btn-secondary" onclick="openEdit(${item.id})">✏️</button>
-                  <button class="btn btn-sm btn-primary" onclick="addToCart(state.inventory.find(i=>i.id===${item.id}))">🛒</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteMedicine(${item.id})">🗑️</button>
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+    <div class="container">
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+        <button class="tab" onclick="showTab('inventory')">💊 Inventory</button>
+        <button class="tab" onclick="showTab('billing')">🧾 Billing</button>
+        <button class="tab" onclick="showTab('orders')"> Orders</button>
+        <button class="tab" onclick="showTab('alerts')">⚠️ Alerts</button>
+        <button class="tab" onclick="showTab('reports')">📈 Reports</button>
       </div>
-      ${filteredInventory().length === 0 ? `
-        <div class="empty-state">
-          <div class="empty-state-icon">🔍</div>
-          <div>No medicines found</div>
-          <button class="btn btn-primary mt-2" onclick="state.showAddModal=true;render()">+ Add First Medicine</button>
+      
+      <!-- Dashboard -->      <div id="dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div style="font-size:28px">💊</div><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Medicines</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><div style="font-size:28px"></div><div class="stat-value" id="stat-value">₹0</div><div class="stat-label">Stock Value</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#e65100,#f57c00)"><div style="font-size:28px">⚠️</div><div class="stat-value" id="stat-low">0</div><div class="stat-label">Low Stock</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)"><div style="font-size:28px">🚫</div><div class="stat-value" id="stat-out">0</div><div class="stat-label">Out of Stock</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div style="font-size:28px">🧾</div><div class="stat-value" id="stat-bills">0</div><div class="stat-label">Total Bills</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#006064,#00838f)"><div style="font-size:28px"></div><div class="stat-value" id="stat-revenue">₹0</div><div class="stat-label">Today's Revenue</div></div>
         </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-function renderBilling() {
-  const { subtotal, gst, total } = getCartTotals();
-  
-  return `
-    <div style="display:grid;grid-template-columns:1fr 380px;gap:20px">
-      <div>
-        <div class="section-title">🧾 Billing</div>
-        
-        <div class="card mb-2">
-          <div class="card-header">Patient Details</div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div>
-                <label class="input-label">Patient Name *</label>
-                <input class="input" value="${state.patientName}" oninput="state.patientName=this.value">
-              </div>
-              <div>
-                <label class="input-label">Phone</label>
-                <input class="input" value="${state.patientPhone}" oninput="state.patientPhone=this.value" placeholder="Optional">
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="card mb-2">
-          <div class="card-header">Search & Add Medicines</div>
-          <div class="card-body">
-            <div class="search-box mb-2">
-              <span class="search-icon">🔍</span>
-              <input class="input" placeholder="Search medicine..." value="${state.searchTerm}" oninput="state.searchTerm=this.value;render()">
-            </div>
-            <div style="max-height:260px;overflow-y:auto">
-              ${filteredInventory().filter(i => state.searchTerm).map(item => `
-                <div class="cart-item flex justify-between items-center">
-                  <div>
-                    <div style="font-weight:600;font-size:14px">${item.name}</div>
-                    <div style="font-size:12px;color:var(--text-muted)">Stock: <span style="color:${item.stock===0?'var(--danger)':item.stock<=item.minStock?'var(--warning)':'var(--success)'};font-weight:700">${item.stock}</span> | ₹${item.price.toFixed(2)}</div>
-                  </div>
-                  <button class="btn btn-primary btn-sm" onclick="addToCart(state.inventory.find(i=>i.id===${item.id}))" ${item.stock===0?'disabled':''}>+ Add</button>
-                </div>
-              `).join('')}
-              ${state.searchTerm && filteredInventory().filter(i => state.searchTerm).length === 0 ? '<div class="empty-state">No medicines found</div>' : ''}
-            </div>
-          </div>
-        </div>
-        
         <div class="card">
-          <div class="card-header">Bill History (${state.bills.length})</div>
-          <div class="card-body" style="max-height:300px;overflow-y:auto">
-            ${state.bills.length === 0 ? '<div class="empty-state">No bills yet</div>' : state.bills.map(b => `
-              <div onclick="state.showBillPreview=${JSON.stringify(b).replace(/"/g, '&quot;')};render()" style="cursor:pointer;padding:12px;background:var(--bg-tertiary);border-radius:12px;margin-bottom:8px" onmouseover="this.style.background='var(--accent-primary)'" onmouseout="this.style.background='var(--bg-tertiary)'">
-                <div class="flex justify-between">
-                  <div>
-                    <div style="font-weight:600">${b.patient}</div>
-                    <div style="font-size:12px;color:var(--text-muted)">${b.date} • ${b.items.length} items</div>
-                  </div>
-                  <div style="font-weight:800;color:var(--success)">₹${b.total.toFixed(2)}</div>
-                </div>
-              </div>
-            `).join('')}
+          <h3 style="margin-bottom:12px">🚀 Quick Actions</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button class="btn" onclick="openAddModal()">➕ Add Medicine</button>
+            <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"> Import</button>
+            <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(this)">
           </div>
         </div>
       </div>
       
-      <div class="cart-sidebar">
+      <!-- Inventory -->
+      <div id="inventory" style="display:none">
         <div class="card">
-          <div class="card-body">
-            <div class="cart-title">🛒 Cart (${state.cart.length})</div>
-            ${state.cart.length === 0 ? `
-              <div class="empty-state">
-                <div style="font-size:36px;margin-bottom:12px">🛒</div>
-                <div>Cart is empty</div>
-                <div style="font-size:13px;color:var(--text-muted);margin-top:8px">Add medicines from inventory</div>
-              </div>
-            ` : `
-              ${state.cart.map(item => `
-                <div class="cart-item">
-                  <div class="cart-item-header">
-                    <div class="cart-item-name">${item.name}</div>
-                    <button class="btn-danger btn-sm" onclick="removeFromCart(${item.id})">✕</button>
-                  </div>
-                  <div class="cart-qty-control">
-                    <button class="qty-btn" onclick="updateCartQty(${item.id}, ${item.qty - 1})">−</button>
-                    <span class="qty-display">${item.qty}</span>
-                    <button class="qty-btn" onclick="updateCartQty(${item.id}, ${item.qty + 1})">+</button>
-                    <div style="margin-left:auto;font-weight:700;color:var(--success)">₹${(item.price * item.qty).toFixed(2)}</div>
-                  </div>
-                  <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Stock left: ${item.stock - item.qty}</div>
-                </div>
-              `).join('')}
-              <div class="cart-total-section">
-                <div class="cart-total-row"><span>Subtotal</span><span>₹${subtotal.toFixed(2)}</span></div>
-                <div class="cart-total-row"><span>GST (5%)</span><span>₹${gst.toFixed(2)}</span></div>
-                <div class="cart-grand-total"><span>Total</span><span>₹${total.toFixed(2)}</span></div>
-              </div>
-              <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:14px;font-size:16px" onclick="generateBill()">🧾 Generate Bill</button>
-            `}
+          <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+            <input type="text" class="input" id="inv-search" placeholder="Search medicine..." style="flex:1;min-width:250px;margin:0" oninput="renderInventory()">
+            <button class="btn" onclick="openAddModal()">+ Add</button>
           </div>
+          <div style="overflow-x:auto">
+            <table id="inv-table"><thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Billing -->
+      <div id="billing" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 350px;gap:20px">
+          <div>
+            <div class="card">
+              <h3 style="margin-bottom:12px">Patient Details</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <input type="text" class="input" id="bill-patient" placeholder="Patient Name *" style="margin:0">
+                <input type="text" class="input" id="bill-phone" placeholder="Phone" style="margin:0">
+              </div>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom:12px">Search & Add</h3>
+              <input type="text" class="input" id="bill-search" placeholder="Search medicine..." style="margin:0" oninput="renderBillSearch()">
+              <div id="bill-search-results" style="max-height:300px;overflow-y:auto;margin-top:12px"></div>
+            </div>
+          </div>          <div>
+            <div class="card" style="position:sticky;top:20px">
+              <h3 style="margin-bottom:16px">🛒 Cart (<span id="cart-count">0</span>)</h3>
+              <div id="cart-items"></div>
+              <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:16px;padding-top:16px">
+                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>Subtotal:</span><span id="cart-subtotal">0</span></div>
+                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>GST (5%):</span><span id="cart-gst">₹0</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:700;margin-top:12px;color:#00e676"><span>Total:</span><span id="cart-total">₹0</span></div>
+                <button class="btn" style="width:100%;margin-top:16px;padding:12px;font-size:16px" onclick="generateBill()">🧾 Generate Bill</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Orders -->
+      <div id="orders" style="display:none">
+        <div class="card">
+          <h3 style="margin-bottom:16px">📦 Purchase Orders</h3>
+          <div id="order-items"></div>
+          <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn" onclick="placeOrder()" id="place-order-btn" disabled>📦 Place Order</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Alerts -->
+      <div id="alerts" style="display:none"><div id="alerts-content"></div></div>
+      
+      <!-- Reports -->
+      <div id="reports" style="display:none">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-value" id="rep-today">0</div><div class="stat-label">Today's Sales</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-value" id="rep-month">₹0</div><div class="stat-label">This Month</div></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:16px">🏆 Top Items</h3>
+          <div id="top-items"></div>
         </div>
       </div>
     </div>
-  `;
-}
+  </div>
 
-function renderOrders() {
-  const lowStock = getLowStockItems();
-  
-  return `
-    <div class="section-title">📦 Order Management</div>
-    
-    <div class="card mb-2">
-      <div class="card-header">Create New Order</div>
-      <div class="card-body">
-        ${lowStock.map(item => `
-          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;gap:10px;align-items:center;padding:12px;background:${item.stock<=item.minStock?'rgba(255,82,82,0.06)':'var(--bg-tertiary)'};border-radius:12px;margin-bottom:8px;border:${item.stock<=item.minStock?'1px solid rgba(255,82,82,0.2)':'1px solid transparent'}">
-            <div>
-              <div style="font-weight:600;font-size:14px">${item.name}</div>
-              <div style="font-size:12px;color:var(--text-muted)">${item.supplier}</div>
-            </div>
-            <div style="font-size:13px">Stock: <span style="color:${item.stock===0?'var(--danger)':item.stock<=item.minStock?'var(--warning)':'var(--success)'};font-weight:700">${item.stock}</span></div>
-            <div style="font-size:12px;color:var(--text-muted)">Min: ${item.minStock}</div>
-            <a href="tel:${item.supplierPhone}" style="font-size:12px;color:var(--accent-secondary)">${item.supplierPhone}</a>
-            <input type="number" class="input" style="padding:8px" placeholder="Qty" min="0" value="${state.orderQty[item.id]||''}" oninput="state.orderQty={...state.orderQty,[${item.id}]:+this.value};render()">
-            ${state.orderQty[item.id] > 0 ? `<span style="font-size:13px;color:var(--accent-primary);font-weight:700">₹${(item.price * state.orderQty[item.id]).toFixed(0)}</span>` : ''}
-          </div>
-        `).join('')}
-        ${lowStock.length === 0 ? '<div class="empty-state">✅ All items in stock!</div>' : ''}
-        
-        <div class="flex justify-end gap-2 mt-2">
-          <button class="btn btn-secondary" onclick="exportMedicines('csv')">📥 Export List</button>
-          <button class="btn btn-primary" onclick="placeOrder()" ${lowStock.filter(i=>state.orderQty[i.id]>0).length===0?'disabled':''}>📦 Place Order</button>
-        </div>
+  <!-- Add/Edit Modal -->
+  <div id="add-modal" class="modal" onclick="if(event.target===this)closeAddModal()">
+    <div class="modal-content">
+      <h3 id="modal-title" style="margin-bottom:16px">Add Medicine</h3>
+      <div class="form-grid">
+        <input type="text" class="input full-width" id="med-name" placeholder="Medicine Name *">
+        <input type="text" class="input" id="med-category" placeholder="Category" value="Tablet">        <input type="number" class="input" id="med-stock" placeholder="Stock *">
+        <input type="number" class="input" id="med-price" placeholder="Price (₹) *" step="0.01">
+        <input type="number" class="input" id="med-min" placeholder="Min Stock">
+        <input type="text" class="input full-width" id="med-supplier" placeholder="Supplier">
+        <input type="text" class="input full-width" id="med-phone" placeholder="Supplier Phone">
+        <input type="date" class="input full-width" id="med-expiry">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end">
+        <button class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+        <button class="btn" onclick="saveMedicine()">💾 Save</button>
       </div>
     </div>
-    
-    ${state.orders.length > 0 ? `
-      <div class="card">
-        <div class="card-header">Order History</div>
-        <div class="card-body">
-          ${state.orders.map(o => `
-            <div style="background:var(--bg-tertiary);border-radius:14px;padding:18px;margin-bottom:12px">
-              <div class="flex justify-between mb-2 flex-wrap gap-2">
-                <div>
-                  <span style="font-weight:800;color:var(--accent-primary)">${o.id}</span>
-                  <span style="font-size:12px;color:var(--text-muted);margin-left:8px">${o.date}</span>
-                </div>
-                <span class="badge badge-ok">✅ ${o.status}</span>
-              </div>
-              ${o.items.map(i => `
-                <div style="font-size:13px;color:var(--text-secondary);margin:4px 0;padding-left:16px;position:relative">
-                  <strong style="color:var(--text-primary)">${i.name}</strong>: ${i.orderQty} units from ${i.supplier}
-                </div>
-              `).join('')}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    ` : ''}
-  `;
-}
+  </div>
 
-function renderLowStock() {
-  const lowStock = getLowStockItems().filter(i => i.stock > 0);
-  const outOfStock = getOutOfStock();
-  
-  return `
-    <div class="section-title">⚠️ Stock Alerts</div>
-    
-    ${outOfStock.length > 0 ? `
-      <div class="card mb-2" style="border-left:4px solid var(--danger)">
-        <div class="card-header" style="color:var(--danger);font-weight:700">🚫 OUT OF STOCK</div>
-        <div class="table-container">
-          <table>
-            <thead><tr><th>Medicine</th><th>Supplier</th><th>Phone</th><th>Price</th><th>Action</th></tr></thead>
-            <tbody>
-              ${outOfStock.map(i => `
-                <tr>
-                  <td style="font-weight:700">${i.name}</td>
-                  <td>${i.supplier}</td>
-                  <td><a href="tel:${i.supplierPhone}" style="color:var(--accent-secondary)">${i.supplierPhone}</a></td>
-                  <td>₹${i.price.toFixed(2)}</td>
-                  <td><button class="btn btn-primary btn-sm" onclick="state.activeTab='Orders';render()">📦 Order</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    ` : ''}
-    
-    ${lowStock.length > 0 ? `
-      <div class="card" style="border-left:4px solid var(--warning)">
-        <div class="card-header" style="color:var(--warning);font-weight:700">⚠️ LOW STOCK</div>
-        <div class="table-container">
-          <table>
-            <thead><tr><th>Medicine</th><th>Current</th><th>Min</th><th>Supplier</th><th>Phone</th><th>Action</th></tr></thead>
-            <tbody>
-              ${lowStock.map(i => `
-                <tr>
-                  <td style="font-weight:700">${i.name}</td>
-                  <td><span class="badge badge-low">${i.stock}</span></td>
-                  <td>${i.minStock}</td>
-                  <td>${i.supplier}</td>
-                  <td><a href="tel:${i.supplierPhone}" style="color:var(--accent-secondary)">${i.supplierPhone}</a></td>
-                  <td><button class="btn btn-primary btn-sm" onclick="state.activeTab='Orders';render()">📦 Order</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    ` : ''}
-    
-    ${getLowStockItems().length === 0 ? `
-      <div class="empty-state">
-        <span style="font-size:48px;display:block;margin-bottom:16px">✅</span>
-        <div style="font-weight:700;font-size:18px;color:var(--success)">All stocks are healthy!</div>
-        <div style="color:var(--text-muted);margin-top:8px">No medicines need reordering at this time</div>
-      </div>
-    ` : ''}
-  `;
-}
-
-function renderModals() {
-  return `
-    ${state.showAddModal ? `
-      <div class="modal-overlay" onclick="if(event.target===this){state.showAddModal=false;state.editId=null;render()}">
-        <div class="modal" onclick="event.stopPropagation()">
-          <div class="modal-title">${state.editId ? '✏️ Edit Medicine' : '➕ Add Medicine'}</div>
-          <div class="form-grid">
-            <div class="full-width">
-              <label class="input-label">Medicine Name *</label>
-              <input class="input" placeholder="e.g. Paracetamol 500mg" value="${state.newMed.name}" oninput="state.newMed.name=this.value">
-            </div>
-            <div>
-              <label class="input-label">Stock *</label>
-              <input class="input" type="number" placeholder="100" value="${state.newMed.stock}" oninput="state.newMed.stock=this.value">
-            </div>
-            <div>
-              <label class="input-label">Price (₹) *</label>
-              <input class="input" type="number" step="0.01" placeholder="5.50" value="${state.newMed.price}" oninput="state.newMed.price=this.value">
-            </div>
-            <div>
-              <label class="input-label">Min Stock Alert</label>
-              <input class="input" type="number" placeholder="30" value="${state.newMed.minStock}" oninput="state.newMed.minStock=this.value">
-            </div>
-            <div>
-              <label class="input-label">Category</label>
-              <select class="input" onchange="state.newMed.category=this.value">
-                ${['Tablet','Capsule','Syrup','Injection','Ointment','Drops','Other'].map(c => `<option value="${c}" ${state.newMed.category===c?'selected':''}>${c}</option>`).join('')}
-              </select>
-            </div>
-            <div class="full-width">
-              <label class="input-label">Supplier</label>
-              <input class="input" placeholder="e.g. Sun Pharma" value="${state.newMed.supplier}" oninput="state.newMed.supplier=this.value">
-            </div>
-            <div class="full-width">
-              <label class="input-label">Supplier Phone</label>
-              <input class="input" placeholder="9876543210" value="${state.newMed.supplierPhone}" oninput="state.newMed.supplierPhone=this.value">
-            </div>
-            <div class="full-width">
-              <label class="input-label">Expiry Date</label>
-              <input class="input" type="date" value="${state.newMed.expiry}" oninput="state.newMed.expiry=this.value">
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="state.showAddModal=false;state.editId=null;render()">Cancel</button>
-            <button class="btn btn-primary" onclick="saveMedicine()">${state.editId ? '✅ Update' : '✅ Add'}</button>
-          </div>
-        </div>
-      </div>
-    ` : ''}
-    
-    ${state.showImportModal ? `
-      <div class="modal-overlay" onclick="if(event.target===this){state.showImportModal=false;render()}">
-        <div class="modal" onclick="event.stopPropagation()">
-          <div class="modal-title">📤 Import Medicines</div>
-          <div style="margin-bottom:20px">
-            <p style="color:var(--text-secondary);margin-bottom:12px">Select a JSON or CSV file to import medicines. Existing items with same ID will be skipped.</p>
-            <div class="import-export-section">
-              <div class="file-input-wrapper">
-                <button class="btn btn-primary">📁 Choose File</button>
-                <input type="file" accept=".json,.csv" onchange="importMedicines(this.files[0]);this.value=''">
-              </div>
-              <button class="btn btn-secondary" onclick="exportMedicines('json')">📥 Download Sample JSON</button>
-              <button class="btn btn-secondary" onclick="exportMedicines('csv')">📥 Download Sample CSV</button>
-            </div>
-          </div>
-          <div style="background:var(--bg-tertiary);border-radius:10px;padding:14px;font-size:13px;color:var(--text-muted)">
-            <strong>Format Tips:</strong><br>
-            • JSON: Array of medicine objects with fields: id, name, category, stock, price, supplier, supplierPhone, minStock, expiry<br>
-            • CSV: Headers: ID,Name,Category,Stock,Price,Supplier,Phone,MinStock,Expiry
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="state.showImportModal=false;render()">Close</button>
-          </div>
-        </div>
-      </div>
-    ` : ''}
-    
-    ${state.showBillPreview ? `
-      <div class="modal-overlay" onclick="if(event.target===this){state.showBillPreview=null;render()}">
-        <div class="bill-preview" onclick="event.stopPropagation()">
-          <div class="bill-header">
-            <div style="font-size:28px;font-weight:800;color:#1a237e;font-family:'Baloo 2',cursive">💊 Khan Medicos</div>
-            <div style="font-size:13px;color:#555">Trusted Medical Store Since 1995</div>
-            <div style="font-weight:800;font-size:18px;margin-top:8px">BILL / RECEIPT</div>
-          </div>
-          <div class="bill-details">
-            <div><b>Bill No:</b> ${state.showBillPreview.id}</div>
-            <div><b>Date:</b> ${state.showBillPreview.date}</div>
-            <div><b>Patient:</b> ${state.showBillPreview.patient}</div>
-            ${state.showBillPreview.phone ? `<div><b>Phone:</b> ${state.showBillPreview.phone}</div>` : ''}
-          </div>
-          <table class="bill-table">
-            <thead>
-              <tr><th style="width:50%">Medicine</th><th style="width:15%;text-align:center">Qty</th><th style="width:15%;text-align:center">Rate</th><th style="width:20%;text-align:right">Amount</th></tr>
-            </thead>
-            <tbody>
-              ${state.showBillPreview.items.map(i => `
-                <tr>
-                  <td style="font-weight:500">${i.name}</td>
-                  <td style="text-align:center">${i.qty}</td>
-                  <td style="text-align:center">₹${i.price.toFixed(2)}</td>
-                  <td style="text-align:right;font-weight:600">₹${(i.price*i.qty).toFixed(2)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <div class="bill-total">
-            <div class="bill-total-row"><span>Subtotal:</span><span>₹${state.showBillPreview.subtotal.toFixed(2)}</span></div>
-            <div class="bill-total-row"><span>GST (5%):</span><span>₹${state.showBillPreview.gst.toFixed(2)}</span></div>
-            <div class="bill-total-row" style="font-weight:800;font-size:18px;color:#1a237e;border-top:1px solid #ccc;padding-top:10px;margin-top:8px"><span>TOTAL:</span><span>₹${state.showBillPreview.total.toFixed(2)}</span></div>
-          </div>
-          <div class="bill-footer">
-            Aapki sehat hi hamari pehli zimmedari hai. Get well soon! 🙏<br>
-            Khan Medicos • Contact: 9876543210
-          </div>
-          <div class="bill-actions">
-            <button class="btn btn-primary" style="background:#1a237e!important" onclick="printBill()">🖨️ Print</button>
-            <button class="btn btn-secondary" onclick="state.showBillPreview=null;render()">Close</button>
-          </div>
-        </div>
-      </div>
-    ` : ''}
-  `;
-}
-
-function renderNotification() {
-  if (!state.notification) return '';
-  return `
-    <div class="notification ${state.notification.type}">
-      ${state.notification.type === 'error' ? '⚠️' : state.notification.type === 'warning' ? '⚡' : '✅'}
-      ${state.notification.msg}
-    </div>
-  `;
-}
-
-// ========== EVENT LISTENERS ==========
-function setupEventListeners() {
-  // Global click handler for modals
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.onclick = (e) => {
-      if (e.target === overlay) {
-        state.showAddModal = false;
-        state.showImportModal = false;
-        state.showBillPreview = null;
-        render();
-      }
+  <script>
+    // State
+    let state = {
+      currentUser: null,
+      currentStore: 'Main Branch',
+      inventory: {},
+      bills: {},
+      orders: {},
+      cart: [],
+      editId: null,
+      orderQty: {}
     };
-  });
-}
 
-// ========== GLOBAL FUNCTIONS (for onclick handlers) ==========
-window.toggleTheme = toggleTheme;
-window.addToCart = addToCart;
-window.removeFromCart = removeFromCart;
-window.updateCartQty = updateCartQty;
-window.generateBill = generateBill;
-window.printBill = printBill;
-window.saveMedicine = saveMedicine;
-window.openEdit = (id) => {
-  const item = state.inventory.find(i => i.id === id);
-  if (item) {
-    state.editId = item.id;
-    state.newMed = { ...item };
-    state.showAddModal = true;
-    render();
-  }
-};
-window.deleteMedicine = deleteMedicine;
-window.exportMedicines = exportMedicines;
-window.importMedicines = importMedicines;
-window.placeOrder = placeOrder;
+    // Robust Login Function
+    function handleLogin() {
+      var user = document.getElementById('login-user').value.trim();
+      var pass = document.getElementById('login-pass').value;
+      var errEl = document.getElementById('login-error');
+      
+      // Clear previous errors
+      errEl.style.display = 'none';
+      errEl.textContent = '';
 
-// ========== START APP ==========
-document.addEventListener('DOMContentLoaded', initApp);
+      try {
+        if (user === 'admin' && pass === 'admin123') {
+          loginUser('Admin', 'admin');
+        } else if (user === 'staff' && pass === 'staff123') {
+          loginUser('Staff', 'staff');
+        } else {
+          errEl.textContent = 'Galat ID/Password. Use admin/admin123';
+          errEl.style.display = 'block';
+        }
+      } catch (e) {
+        errEl.textContent = 'Login Error: ' + e.message;
+        errEl.style.display = 'block';
+      }    }
 
-// backend/server.js
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const db = require('./database');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// ========== API ROUTES ==========
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
-
-// ========== MEDICINES ==========
-
-// Get all medicines
-app.get('/api/medicines', async (req, res) => {
-  try {
-    const medicines = await db.all('SELECT * FROM medicines ORDER BY name');
-    res.json(medicines);
-  } catch (error) {
-    console.error('Get medicines error:', error);
-    res.status(500).json({ error: 'Failed to fetch medicines' });
-  }
-});
-
-// Get medicine by ID
-app.get('/api/medicines/:id', async (req, res) => {
-  try {
-    const medicine = await db.get('SELECT * FROM medicines WHERE id = ?', [req.params.id]);
-    if (!medicine) return res.status(404).json({ error: 'Medicine not found' });
-    res.json(medicine);
-  } catch (error) {
-    console.error('Get medicine error:', error);
-    res.status(500).json({ error: 'Failed to fetch medicine' });
-  }
-});
-
-// Create new medicine
-app.post('/api/medicines', async (req, res) => {
-  try {
-    const { name, category, stock, price, supplier, supplierPhone, minStock, expiry } = req.body;
-    
-    if (!name || price === undefined || stock === undefined) {
-      return res.status(400).json({ error: 'Name, price, and stock are required' });
+    function loginUser(roleName, roleType) {
+      state.currentUser = { name: roleName, role: roleType };
+      // Hide login, show app
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      document.getElementById('user-info').textContent = roleName + ' • ' + state.currentStore;
+      
+      // Initialize data
+      initApp();
+      showNotification('Login Successful! Welcome ' + roleName);
     }
-    
-    const result = await db.run(
-      `INSERT INTO medicines (name, category, stock, price, supplier, supplierPhone, minStock, expiry, createdAt) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, category || 'Tablet', +stock, +price, supplier || '', supplierPhone || '', +minStock || 0, expiry || '', new Date().toISOString()]
-    );
-    
-    res.status(201).json({ id: result.lastID, message: 'Medicine created' });
-  } catch (error) {
-    console.error('Create medicine error:', error);
-    res.status(500).json({ error: 'Failed to create medicine' });
-  }
-});
 
-// Update medicine
-app.put('/api/medicines/:id', async (req, res) => {
-  try {
-    const { name, category, stock, price, supplier, supplierPhone, minStock, expiry } = req.body;
-    
-    const result = await db.run(
-      `UPDATE medicines SET name=?, category=?, stock=?, price=?, supplier=?, supplierPhone=?, minStock=?, expiry=?, updatedAt=? WHERE id=?`,
-      [name, category, +stock, +price, supplier, supplierPhone, +minStock, expiry, new Date().toISOString(), req.params.id]
-    );
-    
-    if (result.changes === 0) return res.status(404).json({ error: 'Medicine not found' });
-    
-    res.json({ message: 'Medicine updated' });
-  } catch (error) {
-    console.error('Update medicine error:', error);
-    res.status(500).json({ error: 'Failed to update medicine' });
-  }
-});
-
-// Delete medicine
-app.delete('/api/medicines/:id', async (req, res) => {
-  try {
-    const result = await db.run('DELETE FROM medicines WHERE id = ?', [req.params.id]);
-    if (result.changes === 0) return res.status(404).json({ error: 'Medicine not found' });
-    res.json({ message: 'Medicine deleted' });
-  } catch (error) {
-    console.error('Delete medicine error:', error);
-    res.status(500).json({ error: 'Failed to delete medicine' });
-  }
-});
-
-// ========== BILLS ==========
-
-app.get('/api/bills', async (req, res) => {
-  try {
-    const bills = await db.all('SELECT * FROM bills ORDER BY date DESC');
-    res.json(bills);
-  } catch (error) {
-    console.error('Get bills error:', error);
-    res.status(500).json({ error: 'Failed to fetch bills' });
-  }
-});
-
-app.post('/api/bills', async (req, res) => {
-  try {
-    const { id, date, patient, phone, items, subtotal, gst, total } = req.body;
-    
-    await db.run(
-      `INSERT INTO bills (id, date, patient, phone, items, subtotal, gst, total, createdAt) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, date, patient, phone || '', JSON.stringify(items), subtotal, gst, total, new Date().toISOString()]
-    );
-    
-    res.status(201).json({ message: 'Bill created' });
-  } catch (error) {
-    console.error('Create bill error:', error);
-    res.status(500).json({ error: 'Failed to create bill' });
-  }
-});
-
-// ========== ORDERS ==========
-
-app.get('/api/orders', async (req, res) => {
-  try {
-    const orders = await db.all('SELECT * FROM orders ORDER BY date DESC');
-    res.json(orders);
-  } catch (error) {
-    console.error('Get orders error:', error);
-    res.status(500).json({ error: 'Failed to fetch orders' });
-  }
-});
-
-app.post('/api/orders', async (req, res) => {
-  try {
-    const { id, date, status, items } = req.body;
-    
-    await db.run(
-      `INSERT INTO orders (id, date, status, items, createdAt) 
-       VALUES (?, ?, ?, ?, ?)`,
-      [id, date, status, JSON.stringify(items), new Date().toISOString()]
-    );
-    
-    res.status(201).json({ message: 'Order created' });
-  } catch (error) {
-    console.error('Create order error:', error);
-    res.status(500).json({ error: 'Failed to create order' });
-  }
-});
-
-// ========== SERVE FRONTEND ==========
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
-
-// ========== START SERVER ==========
-app.listen(PORT, () => {
-  console.log(`🚀 Khan Medicos Server running at http://localhost:${PORT}`);
-  console.log(`📁 Data stored in: ${path.join(__dirname, 'khan-medicos.db')}`);
-});
-
-// backend/database.js
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-const DB_PATH = path.join(__dirname, 'khan-medicos.db');
-
-// Initialize database
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error('Database connection error:', err);
-  } else {
-    console.log('✅ Connected to SQLite database');
-    initTables();
-  }
-});
-
-function initTables() {
-  // Medicines table
-  db.run(`
-    CREATE TABLE IF NOT EXISTS medicines (
-      id INTEGER PRIMARY KEY,
-      name TEXT NOT NULL,
-      category TEXT DEFAULT 'Tablet',
-      stock INTEGER NOT NULL DEFAULT 0,
-      price REAL NOT NULL,
-      supplier TEXT,
-      supplierPhone TEXT,
-      minStock INTEGER DEFAULT 0,
-      expiry TEXT,
-      createdAt TEXT,
-      updatedAt TEXT
-    )
-  `);
-  
-  // Bills table
-  db.run(`
-    CREATE TABLE IF NOT EXISTS bills (
-      id TEXT PRIMARY KEY,
-      date TEXT NOT NULL,
-      patient TEXT NOT NULL,
-      phone TEXT,
-      items TEXT NOT NULL,
-      subtotal REAL NOT NULL,
-      gst REAL NOT NULL,
-      total REAL NOT NULL,
-      createdAt TEXT
-    )
-  `);
-  
-  // Orders table
-  db.run(`
-    CREATE TABLE IF NOT EXISTS orders (
-      id TEXT PRIMARY KEY,
-      date TEXT NOT NULL,
-      status TEXT DEFAULT 'Placed',
-      items TEXT NOT NULL,
-      createdAt TEXT
-    )
-  `);
-  
-  // Seed initial data if empty
-  db.get('SELECT COUNT(*) as count FROM medicines', (err, row) => {
-    if (err) return;
-    if (row.count === 0) {
-      seedInitialData();
+    function logout() {
+      location.reload();
     }
-  });
-}
 
-function seedInitialData() {
-  const initialMedicines = [
-    { id: 1, name: "Paracetamol 500mg", category: "Tablet", stock: 200, price: 2.5, supplier: "Sun Pharma", supplierPhone: "9876543210", minStock: 50, expiry: "2026-12-31" },
-    { id: 2, name: "Amoxicillin 250mg", category: "Capsule", stock: 30, price: 8.0, supplier: "Cipla", supplierPhone: "9123456789", minStock: 40, expiry: "2026-08-15" },
-    { id: 3, name: "Omeprazole 20mg", category: "Capsule", stock: 5, price: 5.5, supplier: "Dr. Reddy's", supplierPhone: "9988776655", minStock: 30, expiry: "2027-01-20" },
-    { id: 4, name: "Cetirizine 10mg", category: "Tablet", stock: 150, price: 3.0, supplier: "Mankind Pharma", supplierPhone: "9871234567", minStock: 40, expiry: "2026-11-10" },
-    { id: 5, name: "Metformin 500mg", category: "Tablet", stock: 0, price: 4.0, supplier: "Sun Pharma", supplierPhone: "9876543210", minStock: 50, expiry: "2027-03-05" },
-    { id: 6, name: "Azithromycin 500mg", category: "Tablet", stock: 60, price: 15.0, supplier: "Cipla", supplierPhone: "9123456789", minStock: 20, expiry: "2026-09-30" },
-    { id: 7, name: "Atorvastatin 10mg", category: "Tablet", stock: 90, price: 7.0, supplier: "Lupin", supplierPhone: "9765432100", minStock: 30, expiry: "2027-02-28" },
-    { id: 8, name: "Pantoprazole 40mg", category: "Tablet", stock: 12, price: 6.5, supplier: "Zydus Cadila", supplierPhone: "9654321098", minStock: 25, expiry: "2026-10-15" },
-  ];
-  
-  const stmt = db.prepare(`
-    INSERT INTO medicines (id, name, category, stock, price, supplier, supplierPhone, minStock, expiry, createdAt) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-  
-  initialMedicines.forEach(med => {
-    stmt.run(med.id, med.name, med.category, med.stock, med.price, med.supplier, med.supplierPhone, med.minStock, med.expiry, new Date().toISOString());
-  });
-  
-  stmt.finalize();
-  console.log('🌱 Seeded initial medicines');
-}
+    // Initialize App Data
+    function initApp() {
+      try {
+        // Load or init data for current store
+        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
+        var saved = localStorage.getItem(key);
+        
+        if (saved) {
+          var data = JSON.parse(saved);
+          state.inventory[state.currentStore] = data.inventory || [];
+          state.bills[state.currentStore] = data.bills || [];
+          state.orders[state.currentStore] = data.orders || [];
+        } else {
+          // Default data
+          state.inventory[state.currentStore] = [
+            {id:1,name:'Paracetamol 500mg',category:'Tablet',stock:200,price:2.5,supplier:'Sun Pharma',phone:'9876543210',minStock:50},
+            {id:2,name:'Amoxicillin 250mg',category:'Capsule',stock:30,price:8,supplier:'Cipla',phone:'9123456789',minStock:40},
+            {id:3,name:'Metformin 500mg',category:'Tablet',stock:0,price:4,supplier:'Sun Pharma',phone:'9876543210',minStock:50}
+          ];
+          state.bills[state.currentStore] = [];
+          state.orders[state.currentStore] = [];
+        }
+        
+        updateDashboard();
+      } catch (e) {
+        console.error('Init Error', e);
+        showNotification('App Error: ' + e.message, 'error');
+      }
+    }
 
-// Helper functions for promises
-db.allAsync = function(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    this.all(sql, params, (err, rows) => err ? reject(err) : resolve(rows));
-  });
-};
+    function saveData() {
+      try {        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
+        var data = {
+          inventory: state.inventory[state.currentStore],
+          bills: state.bills[state.currentStore],
+          orders: state.orders[state.currentStore]
+        };
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch(e) { console.log('Save failed', e); }
+    }
 
-db.getAsync = function(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    this.get(sql, params, (err, row) => err ? reject(err) : resolve(row));
-  });
-};
+    function changeStore() {
+      state.currentStore = document.getElementById('store-select').value;
+      state.cart = [];
+      document.getElementById('user-info').textContent = state.currentUser.name + ' • ' + state.currentStore;
+      initApp();
+      showNotification('Switched to ' + state.currentStore);
+    }
 
-db.runAsync = function(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    this.run(sql, params, function(err) {
-      if (err) reject(err);
-      else resolve({ lastID: this.lastID, changes: this.changes });
-    });
-  });
-};
+    function showTab(tab) {
+      ['dashboard','inventory','billing','orders','alerts','reports'].forEach(t => {
+        var el = document.getElementById(t);
+        if (el) el.style.display = t === tab ? 'block' : 'none';
+      });
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (event && event.target) event.target.classList.add('active');
+      
+      if (tab === 'dashboard') updateDashboard();
+      if (tab === 'inventory') renderInventory();
+      if (tab === 'billing') renderBillSearch();
+      if (tab === 'orders') renderOrders();
+      if (tab === 'alerts') renderAlerts();
+      if (tab === 'reports') renderReports();
+    }
 
-module.exports = db;
+    // Dashboard
+    function updateDashboard() {
+      var inv = state.inventory[state.currentStore] || [];
+      var bills = state.bills[state.currentStore] || [];
+      
+      document.getElementById('stat-total').textContent = inv.length;
+      var val = inv.reduce((s,i) => s + (i.stock*i.price), 0);
+      document.getElementById('stat-value').textContent = '₹' + val.toFixed(0);
+      document.getElementById('stat-low').textContent = inv.filter(i => i.stock<=i.minStock && i.stock>0).length;
+      document.getElementById('stat-out').textContent = inv.filter(i => i.stock===0).length;
+      document.getElementById('stat-bills').textContent = bills.length;
+      
+      var today = new Date().toISOString().split('T')[0];
+      var rev = bills.filter(b => b.date && b.date.startsWith(today)).reduce((s,b)=>s+b.total,0);
+      document.getElementById('stat-revenue').textContent = '₹' + rev.toFixed(0);
+    }
+    // Inventory
+    function renderInventory() {
+      var inv = state.inventory[state.currentStore] || [];
+      var search = document.getElementById('inv-search').value.toLowerCase();
+      var filtered = inv.filter(i => i.name.toLowerCase().includes(search) || i.category.toLowerCase().includes(search));
+      
+      var tbody = document.querySelector('#inv-table tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = filtered.map(item => `
+        <tr>
+          <td><b>${item.name}</b></td>
+          <td>${item.category}</td>
+          <td style="color:${item.stock===0?'#ff5252':item.stock<=item.minStock?'#ffc107':'#00e676'};font-weight:700">${item.stock}</td>
+          <td>₹${item.price}</td>
+          <td>${item.stock===0?'<span class="badge badge-out">Out</span>':item.stock<=item.minStock?'<span class="badge badge-low">Low</span>':'<span class="badge badge-ok">OK</span>'}</td>
+          <td>
+            <button class="btn btn-secondary" style="padding:6px 10px;font-size:12px" onclick="editMed(${item.id})">Edit</button>
+            <button class="btn" style="padding:6px 10px;font-size:12px" onclick="addToCart(${item.id})">Add</button>
+          </td>
+        </tr>
+      `).join('');
+    }
 
+    function openAddModal() {
+      state.editId = null;
+      document.getElementById('modal-title').textContent = 'Add Medicine';
+      ['med-name','med-stock','med-price','med-min','med-supplier','med-phone','med-expiry'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('med-category').value = 'Tablet';
+      document.getElementById('add-modal').classList.add('active');
+    }
+    function closeAddModal() { document.getElementById('add-modal').classList.remove('active'); }
+    
+    function editMed(id) {
+      var inv = state.inventory[state.currentStore];
+      var item = inv.find(i => i.id === id);
+      if (!item) return;
+      state.editId = id;
+      document.getElementById('modal-title').textContent = 'Edit Medicine';
+      document.getElementById('med-name').value = item.name;
+      document.getElementById('med-category').value = item.category;
+      document.getElementById('med-stock').value = item.stock;
+      document.getElementById('med-price').value = item.price;
+      document.getElementById('med-min').value = item.minStock;
+      document.getElementById('med-supplier').value = item.supplier || '';
+      document.getElementById('med-phone').value = item.phone || '';
+      document.getElementById('med-expiry').value = item.expiry || '';
+      document.getElementById('add-modal').classList.add('active');
+    }
+    function saveMedicine() {
+      var name = document.getElementById('med-name').value;
+      var stock = parseInt(document.getElementById('med-stock').value) || 0;
+      var price = parseFloat(document.getElementById('med-price').value) || 0;
+      
+      if (!name || !price) { showNotification('Name and Price required', 'error'); return; }
+      
+      var med = {
+        name: name,
+        category: document.getElementById('med-category').value || 'Tablet',
+        stock: stock, price: price,
+        minStock: parseInt(document.getElementById('med-min').value) || 0,
+        supplier: document.getElementById('med-supplier').value,
+        phone: document.getElementById('med-phone').value,
+        expiry: document.getElementById('med-expiry').value
+      };
+      
+      if (state.editId) {
+        var idx = state.inventory[state.currentStore].findIndex(i => i.id === state.editId);
+        if (idx >= 0) state.inventory[state.currentStore][idx] = { ...state.inventory[state.currentStore][idx], ...med };
+        showNotification('Updated!');
+      } else {
+        med.id = Date.now();
+        state.inventory[state.currentStore].push(med);
+        showNotification('Added!');
+      }
+      saveData(); closeAddModal(); updateDashboard(); renderInventory();
+    }
 
-              </script>
-                        </body>
-                        </html>
-                    
+    // Cart & Billing
+    function addToCart(id) {
+      var inv = state.inventory[state.currentStore];
+      var item = inv.find(i => i.id === id);
+      if (!item || item.stock === 0) { showNotification('Out of stock!', 'error'); return; }
+      
+      var existing = state.cart.find(c => c.id === id);
+      if (existing) {
+        if (existing.qty >= item.stock) { showNotification('Not enough stock!', 'error'); return; }
+        existing.qty++;
+      } else {
+        state.cart.push({ ...item, qty: 1 });
+      }
+      showNotification('Added to cart');
+      renderCart();
+    }
+
+    function renderCart() {
+      var container = document.getElementById('cart-items');
+      document.getElementById('cart-count').textContent = state.cart.length;      
+      if (state.cart.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#90a4ae;padding:20px">Empty</p>';
+      } else {
+        container.innerHTML = state.cart.map(item => `
+          <div class="cart-item">
+            <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">₹${item.price} × ${item.qty}</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="qty-btn" onclick="updateCartQty(${item.id},-1)">-</button>
+              <span style="font-weight:700">${item.qty}</span>
+              <button class="qty-btn" onclick="updateCartQty(${item.id},1)">+</button>
+              <button class="btn btn-danger" style="padding:4px 8px;margin-left:8px" onclick="removeFromCart(${item.id})">×</button>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      var subtotal = state.cart.reduce((s,i) => s + (i.price * i.qty), 0);
+      var gst = subtotal * 0.05;
+      var total = subtotal + gst;
+      document.getElementById('cart-subtotal').textContent = '₹' + subtotal.toFixed(2);
+      document.getElementById('cart-gst').textContent = '₹' + gst.toFixed(2);
+      document.getElementById('cart-total').textContent = '₹' + total.toFixed(2);
+    }
+
+    function updateCartQty(id, change) {
+      var item = state.cart.find(c => c.id === id);
+      var invItem = state.inventory[state.currentStore].find(i => i.id === id);
+      if (!item || !invItem) return;
+      var newQty = item.qty + change;
+      if (newQty <= 0) removeFromCart(id);
+      else if (newQty <= invItem.stock) { item.qty = newQty; renderCart(); }
+      else showNotification('Not enough stock!', 'error');
+    }
+    function removeFromCart(id) { state.cart = state.cart.filter(c => c.id !== id); renderCart(); }
+
+    function renderBillSearch() {
+      var inv = state.inventory[state.currentStore];
+      var search = document.getElementById('bill-search').value.toLowerCase();
+      var container = document.getElementById('bill-search-results');
+      if (!search) { container.innerHTML = ''; return; }
+      
+      var filtered = inv.filter(i => i.name.toLowerCase().includes(search)).slice(0, 5);
+      container.innerHTML = filtered.map(item => `
+        <div class="cart-item" style="cursor:pointer" onclick="addToCart(${item.id});document.getElementById('bill-search').value='';renderBillSearch()">
+          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Stock: ${item.stock} | ₹${item.price}</div></div>
+          <button class="btn" style="padding:6px 12px">+ Add</button>
+        </div>
+      `).join('');
+    }
+    function generateBill() {
+      var patient = document.getElementById('bill-patient').value;
+      if (!patient) { showNotification('Patient name required!', 'error'); return; }
+      if (state.cart.length === 0) { showNotification('Cart empty!', 'error'); return; }
+      
+      var subtotal = state.cart.reduce((s,i) => s + (i.price * i.qty), 0);
+      var gst = subtotal * 0.05;
+      var total = subtotal + gst;
+      
+      var bill = {
+        id: 'BILL-' + Date.now(),
+        date: new Date().toLocaleString(),
+        patient: patient,
+        phone: document.getElementById('bill-phone').value,
+        items: [...state.cart],
+        subtotal: subtotal, gst: gst, total: total,
+        store: state.currentStore, cashier: state.currentUser.name
+      };
+      
+      state.cart.forEach(c => {
+        var item = state.inventory[state.currentStore].find(i => i.id === c.id);
+        if (item) item.stock -= c.qty;
+      });
+      
+      state.bills[state.currentStore].push(bill);
+      saveData();
+      state.cart = [];
+      document.getElementById('bill-patient').value = '';
+      document.getElementById('bill-phone').value = '';
+      
+      showNotification('Bill Generated: ₹' + total.toFixed(2));
+      renderCart(); updateDashboard(); renderInventory();
+    }
+
+    // Orders
+    function renderOrders() {
+      var inv = state.inventory[state.currentStore];
+      var low = inv.filter(i => i.stock <= i.minStock);
+      var container = document.getElementById('order-items');
+      
+      if (low.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#00e676;padding:20px">✅ All in stock!</p>';
+        document.getElementById('place-order-btn').disabled = true;
+        return;
+      }
+      
+      container.innerHTML = low.map(item => `
+        <div class="cart-item">
+          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Current: ${item.stock} | Min: ${item.minStock}</div></div>          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" class="input" style="width:80px;margin:0;padding:6px" placeholder="Qty" min="1" value="${state.orderQty[item.id]||''}" onchange="updateOrderQty(${item.id},this.value)">
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('place-order-btn').disabled = true;
+    }
+
+    function updateOrderQty(id, qty) {
+      state.orderQty[id] = parseInt(qty) || 0;
+      renderOrders();
+      document.getElementById('place-order-btn').disabled = !Object.values(state.orderQty).some(q => q > 0);
+    }
+
+    function placeOrder() {
+      var items = Object.entries(state.orderQty).filter(([id,qty]) => qty > 0).map(([id,qty]) => {
+        var item = state.inventory[state.currentStore].find(i => i.id == id);
+        return { ...item, orderQty: qty };
+      });
+      if (items.length === 0) return;
+      
+      var order = { id: 'ORD-' + Date.now(), date: new Date().toLocaleString(), status: 'Placed', items: items };
+      state.orders[state.currentStore].push(order);
+      saveData();
+      state.orderQty = {};
+      showNotification('Order Placed!');
+      renderOrders();
+    }
+
+    // Alerts
+    function renderAlerts() {
+      var inv = state.inventory[state.currentStore];
+      var low = inv.filter(i => i.stock <= i.minStock && i.stock > 0);
+      var out = inv.filter(i => i.stock === 0);
+      var html = '';
+      
+      if (out.length > 0) html += `<div class="card" style="border-left:4px solid #ff5252"><h3 style="color:#ff5252;margin-bottom:12px">🚫 Out of Stock</h3><table><thead><tr><th>Medicine</th><th>Supplier</th></tr></thead><tbody>${out.map(i => `<tr><td><b>${i.name}</b></td><td>${i.supplier}</td></tr>`).join('')}</tbody></table></div>`;
+      if (low.length > 0) html += `<div class="card" style="border-left:4px solid #ffc107"><h3 style="color:#ffc107;margin-bottom:12px">⚠️ Low Stock</h3><table><thead><tr><th>Medicine</th><th>Current</th><th>Min</th></tr></thead><tbody>${low.map(i => `<tr><td><b>${i.name}</b></td><td>${i.stock}</td><td>${i.minStock}</td></tr>`).join('')}</tbody></table></div>`;
+      if (!html) html = '<div class="card" style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:16px">✅</div><h3>All stocks healthy!</h3></div>';
+      
+      document.getElementById('alerts-content').innerHTML = html;
+    }
+
+    // Reports
+    function renderReports() {
+      var bills = state.bills[state.currentStore];
+      var today = new Date().toISOString().split('T')[0];
+      var todaySales = bills.filter(b => b.date && b.date.startsWith(today)).reduce((s,b)=>s+b.total,0);
+      document.getElementById('rep-today').textContent = '₹' + todaySales.toFixed(0);
+      document.getElementById('rep-month').textContent = '₹' + bills.reduce((s,b)=>s+b.total,0).toFixed(0);      
+      var itemSales = {};
+      bills.forEach(b => b.items.forEach(i => { itemSales[i.name] = (itemSales[i.name]||0) + i.qty; }));
+      var top = Object.entries(itemSales).sort((a,b)=>b[1]-a[1]).slice(0,5);
+      var max = top.length ? top[0][1] : 1;
+      
+      document.getElementById('top-items').innerHTML = top.map(([name,qty]) => `
+        <div class="chart-bar">
+          <div class="chart-label">${name}</div>
+          <div class="chart-fill"><div class="chart-value" style="width:${(qty/max)*100}%"></div><div class="chart-text">${qty}</div></div>
+        </div>
+      `).join('');
+    }
+
+    // Import/Export
+    function exportData() {
+      var data = { inventory: state.inventory[state.currentStore], bills: state.bills[state.currentStore], orders: state.orders[state.currentStore] };
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
+      showNotification('Exported!');
+    }
+    function importData(input) {
+      var file = input.files[0]; if (!file) return;
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          var data = JSON.parse(e.target.result);
+          if (data.inventory) state.inventory[state.currentStore] = data.inventory;
+          if (data.bills) state.bills[state.currentStore] = data.bills;
+          saveData(); showNotification('Imported!'); updateDashboard(); renderInventory();
+        } catch(err) { showNotification('Import failed', 'error'); }
+      };
+      reader.readAsText(file);
+    }
+
+    // Utils
+    function showNotification(msg, type='success') {
+      var n = document.createElement('div');
+      n.className = 'notification' + (type==='error'?' error':'');
+      n.textContent = msg;
+      document.body.appendChild(n);
+      setTimeout(() => n.remove(), 3000);
+    }
+    function toggleTheme() {
+      var isDark = document.body.style.background !== 'white';
+      document.body.style.background = isDark ? '#f5f7fa' : '#0f1117';
+      document.body.style.color = isDark ? '#1a237e' : '#e8eaf6';
+    }
+  </script>
+</body></html>
