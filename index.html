@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro</title>
+  <title>Khan Medicos Pro - Pagination</title>
   <!-- SheetJS Library for Excel Import -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -56,7 +56,7 @@
     .stat-lbl { font-size: 12px; opacity: 0.8; }
     
     /* TABLES */
-    .table-wrap { overflow-x: auto; max-height: 400px; }
+    .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th { background: #252838; color: #90caf9; padding: 10px; text-align: left; position: sticky; top: 0; }
     td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -68,7 +68,6 @@
     .btn-success { background: #00e676; color: white; }
     .btn-danger { background: #ff5252; color: white; }
     .btn-sec { background: rgba(255,255,255,0.1); color: #e8eaf6; }
-    .btn-warning { background: #ffc107; color: black; }
     
     /* BILL PREVIEW (PRINT MODE) */
     #bill-modal {
@@ -127,7 +126,7 @@
       <button class="nav-btn active" onclick="go('dash')">📊 Dashboard</button>
       <button class="nav-btn" onclick="go('inv')">💊 Inventory</button>
       <button class="nav-btn" onclick="go('bill')">🧾 Billing</button>
-      <button class="nav-btn" onclick="go('alert')">⚠️ Alerts</button>
+      <button class="nav-btn" onclick="go('alert')">️ Alerts</button>
     </div>
 
     <div class="container">
@@ -145,8 +144,8 @@
           <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)">
             <div class="stat-val" id="d-out">0</div>
             <div class="stat-lbl">Out of Stock</div>
-          </div>          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">
-            <div class="stat-val" id="d-rev">PKR 0</div>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">            <div class="stat-val" id="d-rev">PKR 0</div>
             <div class="stat-lbl">Today's Sale</div>
           </div>
         </div>
@@ -166,7 +165,7 @@
       <div id="inv" class="hidden">
         <div class="card">
           <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
-            <input type="text" id="search" class="input" placeholder="Search medicines..." style="margin:0; flex:1; min-width:200px;" oninput="renderInv()">
+            <input type="text" id="search" class="input" placeholder="Search medicines..." style="margin:0; flex:1; min-width:200px;" oninput="searchAndRender()">
             <button class="btn btn-primary" onclick="openAdd()">+ Add</button>
             <button class="btn btn-success" onclick="document.getElementById('excel-file-inv').click()">📥 Import Excel</button>
             <button class="btn btn-sec" onclick="exportData()">📤 Export</button>
@@ -178,6 +177,10 @@
               <tbody id="inv-body"></tbody>
             </table>
           </div>
+          
+          <!-- PAGINATION CONTROLS -->
+          <div id="pagination-container" style="display:flex; justify-content:center; gap:10px; margin-top:15px; align-items:center;"></div>
+          <div id="page-info" style="text-align:center; font-size:12px; color:#90a4ae; margin-top:5px;"></div>
         </div>
       </div>
 
@@ -191,10 +194,10 @@
               <input type="text" id="p-phone" class="input" placeholder="Phone (Optional)">
             </div>
             <div class="card">
-              <h3>Add Items</h3>
-              <input type="text" id="b-search" class="input" placeholder="Type to search & add..." oninput="renderBillSearch()">
+              <h3>Add Items</h3>              <input type="text" id="b-search" class="input" placeholder="Type to search & add..." oninput="renderBillSearch()">
               <div id="b-results" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
-            </div>          </div>
+            </div>
+          </div>
           <div>
             <div class="card" style="position:sticky; top:20px;">
               <h3>Cart (<span id="c-count">0</span>)</h3>
@@ -240,10 +243,10 @@
 
   <!-- BILL MODAL -->
   <div id="bill-modal" onclick="if(event.target===this)document.getElementById('bill-modal').style.display='none'">
-    <div class="bill-paper">
-      <div class="bill-head">
+    <div class="bill-paper">      <div class="bill-head">
         <div style="font-size:24px;">💊</div>
-        <div style="font-size:20px; font-weight:800; color:#1a237e;">Khan Medicos</div>        <div style="font-size:12px; color:#555;">Professional Pharmacy</div>
+        <div style="font-size:20px; font-weight:800; color:#1a237e;">Khan Medicos</div>
+        <div style="font-size:12px; color:#555;">Professional Pharmacy</div>
       </div>
       <div class="bill-meta" id="b-meta"></div>
       <table class="bill-table">
@@ -274,6 +277,11 @@
     var cart = [];
     var bills = JSON.parse(localStorage.getItem('khan_bills')) || [];
     var editId = null;
+    
+    // PAGINATION STATE
+    var currentPage = 1;
+    var itemsPerPage = 25; // Show 25 medicines per page
+    var filteredMeds = []; // Store filtered results here
 
     // --- INIT ---
     function doLogin() {
@@ -283,21 +291,21 @@
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').classList.remove('hidden');
         renderDash();
-        renderInv();
-      } else {
-        document.getElementById('login-err').style.display = 'block';
+        searchAndRender(); // Initial render with pagination
+      } else {        document.getElementById('login-err').style.display = 'block';
       }
     }
     
     function logout() { location.reload(); }
 
     function go(tab) {
-      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
       
       if (tab==='dash') renderDash();
-      if (tab==='inv') renderInv();
+      if (tab==='inv') searchAndRender(); // Use searchAndRender to reset pagination
       if (tab==='bill') { renderBillSearch(); renderCart(); }
       if (tab==='alert') renderAlert();
     }
@@ -315,35 +323,32 @@
           var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           var jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
           
-          // Parse Excel data
           var imported = 0;
-          var startRow = 1; // Skip header row
+          var startRow = 1; 
           
           for (var i = startRow; i < jsonData.length; i++) {
             var row = jsonData[i];
-            if (row.length < 5) continue; // Skip empty rows
+            if (row.length < 5) continue; 
             
-            // Format: S.No, Generic Name, Brand Name, Category, Packaging, Price
-            // Or: Name, Category, Stock, Price, Min
             var med = {
               id: Date.now() + i,
-              name: row[2] || row[0] || '', // Brand Name or first column
-              cat: row[3] || row[1] || 'General', // Category
-              stock: parseInt(row[4]) || 50, // Default stock 50
-              price: parseFloat(row[5]) || parseFloat(row[3]) || 0,
+              name: row[2] || row[1] || '', 
+              cat: row[3] || 'General', 
+              stock: 100, // Default Stock
+              price: parseFloat(row[5]) || parseFloat(row[3]) || 0, 
               min: 20
             };
             
             if (med.name && med.price > 0) {
               meds.push(med);
-              imported++;
-            }
+              imported++;            }
           }
           
           localStorage.setItem('khan_meds', JSON.stringify(meds));
-          alert('Successfully imported ' + imported + ' medicines!');          renderDash();
-          renderInv();
-          input.value = ''; // Clear input
+          alert('Successfully imported ' + imported + ' medicines!');
+          renderDash();
+          searchAndRender(); // Refresh view
+          input.value = ''; 
         } catch (err) {
           alert('Error importing Excel: ' + err.message);
           console.error(err);
@@ -364,11 +369,29 @@
       document.getElementById('d-rev').innerText = 'PKR '+rev;
     }
 
-    function renderInv() {
+    // PAGINATED RENDER LOGIC
+    function searchAndRender() {
       var q = document.getElementById('search').value.toLowerCase();
-      var filtered = meds.filter(m => m.name.toLowerCase().includes(q) || m.cat.toLowerCase().includes(q));
+      // Filter meds
+      filteredMeds = meds.filter(m => m.name.toLowerCase().includes(q) || m.cat.toLowerCase().includes(q));
+      
+      // Reset to page 1 on search
+      currentPage = 1;
+      
+      renderInventoryPage();
+    }
+
+    function renderInventoryPage() {
+      // Calculate pagination
+      var totalPages = Math.ceil(filteredMeds.length / itemsPerPage);
+      if (currentPage > totalPages) currentPage = 1;
+      if (totalPages === 0) currentPage = 1;
+
+      var start = (currentPage - 1) * itemsPerPage;
+      var end = start + itemsPerPage;
+      var pageItems = filteredMeds.slice(start, end);
       var html = '';
-      filtered.forEach(m => {
+      pageItems.forEach(m => {
         var status = m.stock===0 ? '<span style="color:#ff5252">Out</span>' : (m.stock<=m.min ? '<span style="color:#ffc107">Low</span>' : '<span style="color:#00e676">OK</span>');
         html += `<tr>
           <td><b>${m.name}</b></td>
@@ -383,6 +406,40 @@
         </tr>`;
       });
       document.getElementById('inv-body').innerHTML = html;
+
+      // Render Pagination Buttons
+      var pagHtml = '';
+      if (totalPages > 1) {
+        // Previous Button
+        if (currentPage > 1) {
+          pagHtml += `<button class="btn btn-sec" onclick="changePage(${currentPage - 1})">⬅️ Previous</button>`;
+        }
+        
+        // Page Info
+        pagHtml += `<span style="color:#90a4ae; padding:0 10px;">Page <b>${currentPage}</b> of ${totalPages}</span>`;
+        
+        // Next Button
+        if (currentPage < totalPages) {
+          pagHtml += `<button class="btn btn-sec" onclick="changePage(${currentPage + 1})">Next ➡️</button>`;
+        }
+      }
+      document.getElementById('pagination-container').innerHTML = pagHtml;
+      
+      // Update Info Text
+      var totalItems = filteredMeds.length;
+      var showFrom = start + 1;
+      var showTo = Math.min(end, totalItems);
+      if (totalItems > 0) {
+         document.getElementById('page-info').innerText = `Showing ${showFrom} to ${showTo} of ${totalItems} items`;
+      } else {
+         document.getElementById('page-info').innerText = 'No items found';
+      }
+    }
+
+    function changePage(page) {
+      currentPage = page;
+      renderInventoryPage();
+      // Scroll to top of table      document.querySelector('.table-wrap').scrollTop = 0;
     }
 
     function renderAlert() {
@@ -390,7 +447,8 @@
       var html = '';
       if(low.length===0) html = '<p style="text-align:center; color:#90a4ae;">All stock is healthy ✅</p>';
       else {
-        low.forEach(m => {          html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between;">
+        low.forEach(m => {
+          html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between;">
             <span>${m.name}</span>
             <span style="color:${m.stock===0?'#ff5252':'#ffc107'}">Stock: ${m.stock} (Min: ${m.min})</span>
           </div>`;
@@ -430,8 +488,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <button class="btn btn-sec" style="padding:2px 6px;" onclick="chgQty(${i}, -1)">-</button>
-              <span>${c.qty}</span>
-              <button class="btn btn-sec" style="padding:2px 6px;" onclick="chgQty(${i}, 1)">+</button>
+              <span>${c.qty}</span>              <button class="btn btn-sec" style="padding:2px 6px;" onclick="chgQty(${i}, 1)">+</button>
             </div>
             <button class="btn btn-danger" style="padding:2px 6px; font-size:10px;" onclick="rmCart(${i})">×</button>
           </div>
@@ -439,7 +496,8 @@
       });
       document.getElementById('cart-list').innerHTML = html;
       
-      var gst = sub * 0.05;      var tot = sub + gst;
+      var gst = sub * 0.05;
+      var tot = sub + gst;
       document.getElementById('c-sub').innerText = 'PKR '+sub.toFixed(0);
       document.getElementById('c-gst').innerText = 'PKR '+gst.toFixed(0);
       document.getElementById('c-tot').innerText = 'PKR '+tot.toFixed(0);
@@ -479,8 +537,7 @@
       var tot = sub + gst;
 
       // Update Stock
-      cart.forEach(c => {
-        var med = meds.find(m => m.id === c.id);
+      cart.forEach(c => {        var med = meds.find(m => m.id === c.id);
         if (med) med.stock -= c.qty;
       });
       localStorage.setItem('khan_meds', JSON.stringify(meds));
@@ -488,7 +545,8 @@
       // Save Bill
       var bill = {
         id: 'INV-' + Date.now().toString().slice(-6),
-        date: new Date().toLocaleDateString(),        time: new Date().toLocaleTimeString(),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
         patient: pName,
         phone: document.getElementById('p-phone').value,
         items: [...cart],
@@ -528,8 +586,7 @@
     }
 
     function openAdd(id) {
-      editId = id || null;
-      document.getElementById('modal-title').innerText = id ? 'Edit Medicine' : 'Add Medicine';
+      editId = id || null;      document.getElementById('modal-title').innerText = id ? 'Edit Medicine' : 'Add Medicine';
       if (id) {
         var m = meds.find(x => x.id === id);
         document.getElementById('m-name').value = m.name;
@@ -537,7 +594,8 @@
         document.getElementById('m-stock').value = m.stock;
         document.getElementById('m-price').value = m.price;
         document.getElementById('m-min').value = m.min;
-      } else {        document.getElementById('m-name').value = '';
+      } else {
+        document.getElementById('m-name').value = '';
         document.getElementById('m-cat').value = 'General';
         document.getElementById('m-stock').value = '';
         document.getElementById('m-price').value = '';
@@ -563,22 +621,21 @@
       }
       localStorage.setItem('khan_meds', JSON.stringify(meds));
       document.getElementById('add-modal').style.display = 'none';
-      renderInv();
       renderDash();
+      searchAndRender(); // Refresh list
     }
 
     function delMed(id) {
       if (confirm('Delete this medicine?')) {
         meds = meds.filter(m => m.id !== id);
         localStorage.setItem('khan_meds', JSON.stringify(meds));
-        renderInv();
         renderDash();
+        searchAndRender(); // Refresh list
       }
     }
 
     function exportData() {
-      var dataStr = JSON.stringify(meds, null, 2);
-      var blob = new Blob([dataStr], {type: 'application/json'});
+      var dataStr = JSON.stringify(meds, null, 2);      var blob = new Blob([dataStr], {type: 'application/json'});
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
       a.href = url;
@@ -586,5 +643,6 @@
       a.click();
       alert('Data exported successfully!');
     }
-  </script></body>
+  </script>
+</body>
 </html>
