@@ -3,756 +3,559 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro - Pakistan (467 Medicines)</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <title>Khan Medicos Pro</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f1117; 
-      color: #e8eaf6;
-      min-height: 100vh;
-    }
+    /* CSS RESET & BASE STYLES */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: #0f1117; color: #e8eaf6; min-height: 100vh; }
+    
+    /* LOGIN SCREEN */
     .login-container {
-      position: fixed; inset: 0;
-      background: linear-gradient(135deg, #1a1d2e, #0f1117);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999;
+      position: fixed; inset: 0; background: #0f1117;
+      display: flex; align-items: center; justify-content: center; z-index: 100;
     }
     .login-box {
-      background: #1a1d2e; padding: 40px; border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-      width: 90%; max-width: 400px; text-align: center;
+      background: #1a1d2e; padding: 30px; border-radius: 12px; width: 90%; max-width: 380px;
+      border: 1px solid rgba(255,255,255,0.1); text-align: center;
     }
-    .login-logo { font-size: 48px; margin-bottom: 16px; }
-    .login-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-    .login-sub { color: #90a4ae; margin-bottom: 24px; }
+    .login-logo { font-size: 40px; margin-bottom: 10px; }
+    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
     .input {
       width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; padding: 12px; color: white; margin-bottom: 16px; font-size: 16px;
+      border-radius: 8px; padding: 10px; color: white; margin-bottom: 12px; font-size: 15px;
     }
     .btn-login {
-      width: 100%; background: linear-gradient(90deg, #3d5afe, #00bcd4);
-      color: white; border: none; padding: 14px; border-radius: 8px;
-      font-size: 16px; font-weight: 700; cursor: pointer;
+      width: 100%; background: #3d5afe; color: white; border: none; padding: 12px;
+      border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
     }
-    .btn-login:hover { opacity: 0.9; }
-    .error-msg { color: #ff5252; font-size: 14px; margin-top: 8px; display: none; }
-    .demo-info {
-      background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;
-      margin-top: 20px; font-size: 13px; color: #90a4ae; text-align: left;
-    }
-    
+    .error-msg { color: #ff5252; font-size: 13px; margin-top: 8px; display: none; }
+    .demo-info { font-size: 12px; color: #90a4ae; margin-top: 15px; text-align: left; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; }
+
+    /* APP LAYOUT */
     .header {
-      background: #1a1d2e; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+      background: #1a1d2e; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #3d5afe, #00bcd4); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 36px; height: 36px; background: #3d5afe; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
     .brand-name { font-weight: 700; font-size: 18px; }
-    .header-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .select, .btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-size: 13px; }
-    .btn { background: linear-gradient(135deg, #3d5afe, #00bcd4); border: none; font-weight: 600; }
-    .btn-secondary { background: rgba(255,255,255,0.1); }
-    .btn-danger { background: linear-gradient(135deg, #ff5252, #ff1744); }
-    .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 8px; }
-    .tab { background: rgba(255,255,255,0.05); border: none; color: #90a4ae; padding: 10px 16px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-weight: 600; transition: all 0.2s; }
-    .tab:hover { background: rgba(255,255,255,0.1); }
-    .tab.active { background: linear-gradient(135deg, #3d5afe, #00bcd4); color: white; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: linear-gradient(135deg, #1a237e, #283593); border-radius: 12px; padding: 16px; text-align: center; }
-    .stat-value { font-size: 24px; font-weight: 700; margin: 8px 0; }
-    .stat-label { font-size: 12px; opacity: 0.8; }
-    .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.08); }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    th { color: #90caf9; font-size: 12px; text-transform: uppercase; font-weight: 600; }
-    tr:hover td { background: rgba(61,90,254,0.05); }
-    .badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; }
-    .badge-ok { background: rgba(0,230,118,0.2); color: #00e676; }
-    .badge-low { background: rgba(255,193,7,0.2); color: #ffc107; }
-    .badge-out { background: rgba(255,82,82,0.2); color: #ff5252; }
-    .notification { position: fixed; top: 20px; right: 20px; background: #1b5e20; color: white; padding: 12px 20px; border-radius: 8px; z-index: 1000; animation: slideIn 0.3s ease; max-width: 350px; }
-    .notification.error { background: #b71c1c; }
-    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-    .modal.active { display: flex; }
-    .modal-content { background: #1a1d2e; border-radius: 16px; padding: 24px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-    .full-width { grid-column: 1 / -1; }
-    .cart-item { background: #252838; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .qty-btn { width: 28px; height: 28px; background: #3d5afe; border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 700; }
-    .chart-bar { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
-    .chart-label { width: 100px; font-size: 13px; color: #90a4ae; }
-    .chart-fill { flex: 1; height: 24px; background: rgba(61,90,254,0.2); border-radius: 6px; overflow: hidden; position: relative; }
-    .chart-value { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #3d5afe, #00bcd4); border-radius: 6px; }
-    .chart-text { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; }
-    .hidden { display: none !important; }
+    .nav { display: flex; gap: 8px; overflow-x: auto; padding: 0 20px; background: #0f1117; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .nav-btn {
+      background: transparent; border: none; color: #90a4ae; padding: 12px 16px;
+      font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .nav-btn.active { color: #fff; border-bottom: 2px solid #3d5afe; }
     
-    .bill-preview-wrap {
-      background: white; color: #000; border-radius: 12px; padding: 24px;
-      max-width: 450px; width: 100%; max-height: 90vh; overflow-y: auto;
+    .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .card { background: #1a1d2e; border-radius: 12px; padding: 16px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.05); }    
+    /* GRID SYSTEM */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: linear-gradient(135deg, #1a237e, #283593); padding: 16px; border-radius: 10px; text-align: center; }
+    .stat-val { font-size: 24px; font-weight: 700; margin: 6px 0; }
+    .stat-lbl { font-size: 12px; opacity: 0.8; }
+    
+    /* TABLES */
+    .table-wrap { overflow-x: auto; max-height: 400px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #252838; color: #90caf9; padding: 10px; text-align: left; position: sticky; top: 0; }
+    td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    
+    /* BUTTONS */
+    .btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #3d5afe; color: white; }
+    .btn-danger { background: #ff5252; color: white; }
+    .btn-sec { background: rgba(255,255,255,0.1); color: #e8eaf6; }
+    
+    /* BILL PREVIEW (PRINT MODE) */
+    #bill-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 200;
+      display: none; align-items: center; justify-content: center; padding: 20px;
     }
-    .bill-header-print {
-      text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 12px; margin-bottom: 12px;
+    .bill-paper {
+      background: white; color: black; width: 100%; max-width: 400px; padding: 20px; border-radius: 8px;
     }
-    .bill-header-print h2 { color: #1a237e; font-size: 22px; margin: 4px 0; }    .bill-header-print p { color: #555; font-size: 13px; margin: 2px 0; }
-    .bill-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 13px; margin-bottom: 12px; }
-    .bill-table-print { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
-    .bill-table-print th { background: #f0f4ff; color: #1a237e; padding: 8px; text-align: left; border-bottom: 2px solid #ddd; }
-    .bill-table-print td { padding: 7px 8px; border-bottom: 1px solid #eee; }
-    .bill-totals { border-top: 2px solid #1a237e; padding-top: 10px; margin-top: 10px; }
-    .bill-totals div { display: flex; justify-content: space-between; margin: 4px 0; font-size: 14px; }
-    .bill-grand { font-weight: 800; font-size: 18px; color: #1a237e; border-top: 1px solid #ccc; padding-top: 8px; margin-top: 8px; }
-    .bill-footer-print { text-align: center; margin-top: 16px; font-size: 12px; color: #666; font-style: italic; }
-    .bill-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+    .bill-head { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 10px; margin-bottom: 10px; }
+    .bill-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; margin-bottom: 10px; }
+    .bill-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+    .bill-table th { background: #eee; color: black; padding: 6px; border: 1px solid #ddd; }
+    .bill-table td { padding: 6px; border: 1px solid #eee; color: black; }
+    .bill-tot { border-top: 2px solid black; padding-top: 5px; font-weight: 700; font-size: 14px; }
     
     @media print {
       body * { visibility: hidden; }
-      #bill-print-area, #bill-print-area * { visibility: visible; }
-      #bill-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
-      .no-print { display: none !important; }
+      #bill-modal, #bill-modal * { visibility: visible; }
+      #bill-modal { position: absolute; left: 0; top: 0; width: 100%; background: white; display: block; }
+      .bill-actions { display: none; }
     }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <!-- Login Screen -->
+
+  <!-- LOGIN SCREEN -->
   <div id="login-screen" class="login-container">
-    <div class="login-box">
-      <div class="login-logo">💊</div>
+    <div class="login-box">      <div class="login-logo">💊</div>
       <div class="login-title">Khan Medicos Pro</div>
-      <div class="login-sub">Pakistan Medical Store System (467 Medicines)</div>
-      <input type="text" id="login-user" class="input" placeholder="Username (admin)" value="admin">
-      <input type="password" id="login-pass" class="input" placeholder="Password (admin123)" value="admin123">
-      <button class="btn-login" onclick="handleLogin()"> Login</button>
-      <div id="login-error" class="error-msg"></div>
+      <input type="text" id="user" class="input" placeholder="Username" value="admin">
+      <input type="password" id="pass" class="input" placeholder="Password" value="admin123">
+      <button class="btn-login" onclick="doLogin()">Login</button>
+      <div id="login-err" class="error-msg">Invalid Credentials</div>
       <div class="demo-info">
-        <strong>Demo Accounts:</strong><br>
-        Admin: admin / admin123<br>
-        Staff: staff / staff123
+        <strong>Admin:</strong> admin / admin123<br>
+        <strong>Staff:</strong> staff / staff123
       </div>
     </div>
   </div>
 
-  <!-- Main App -->
-  <div id="app" style="display: none;">
+  <!-- MAIN APP -->
+  <div id="app" class="hidden">
     <div class="header">
       <div class="brand">
         <div class="logo">💊</div>
-        <div>
-          <div class="brand-name">Khan Medicos Pro</div>
-          <div style="font-size:11px;color:#90a4ae" id="user-info">Welcome</div>
-        </div>
+        <div class="brand-name">Khan Medicos</div>
       </div>
-      <div class="header-controls">
-        <select class="select" id="store-select" onchange="changeStore()">          <option>Main Branch</option>
-          <option>City Center</option>
-          <option>Airport Road</option>
-          <option>Gulberg</option>
-        </select>
-        <button class="btn btn-secondary" onclick="toggleTheme()">🌓 Theme</button>
-        <button class="btn btn-danger" onclick="logout()"> Logout</button>
-      </div>
+      <button class="btn btn-sec" onclick="logout()">Logout</button>
     </div>
     
+    <div class="nav">
+      <button class="nav-btn active" onclick="go('dash')">📊 Dashboard</button>
+      <button class="nav-btn" onclick="go('inv')">💊 Inventory</button>
+      <button class="nav-btn" onclick="go('bill')">🧾 Billing</button>
+      <button class="nav-btn" onclick="go('alert')">⚠️ Alerts</button>
+    </div>
+
     <div class="container">
-      <div class="tabs">
-        <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-        <button class="tab" onclick="showTab('inventory')">💊 Inventory (467)</button>
-        <button class="tab" onclick="showTab('billing')">🧾 Billing</button>
-        <button class="tab" onclick="showTab('orders')"> Orders</button>
-        <button class="tab" onclick="showTab('alerts')">⚠️ Alerts</button>
-        <button class="tab" onclick="showTab('reports')"> Reports</button>
-      </div>
-      
-      <!-- Dashboard -->
-      <div id="dashboard">
-        <div class="stats-grid">
-          <div class="stat-card"><div style="font-size:28px">💊</div><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Medicines</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><div style="font-size:28px"></div><div class="stat-value" id="stat-value">PKR 0</div><div class="stat-label">Stock Value</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#e65100,#f57c00)"><div style="font-size:28px">⚠️</div><div class="stat-value" id="stat-low">0</div><div class="stat-label">Low Stock</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)"><div style="font-size:28px">🚫</div><div class="stat-value" id="stat-out">0</div><div class="stat-label">Out of Stock</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div style="font-size:28px">🧾</div><div class="stat-value" id="stat-bills">0</div><div class="stat-label">Total Bills</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#006064,#00838f)"><div style="font-size:28px"></div><div class="stat-value" id="stat-revenue">PKR 0</div><div class="stat-label">Today's Revenue</div></div>
-        </div>
+      <!-- DASHBOARD -->
+      <div id="dash">
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-val" id="d-total">0</div>
+            <div class="stat-lbl">Total Items</div>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+            <div class="stat-val" id="d-val">PKR 0</div>
+            <div class="stat-lbl">Stock Value</div>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)">
+            <div class="stat-val" id="d-out">0</div>
+            <div class="stat-lbl">Out of Stock</div>
+          </div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)">
+            <div class="stat-val" id="d-rev">PKR 0</div>
+            <div class="stat-lbl">Today's Sale</div>
+          </div>        </div>
         <div class="card">
-          <h3 style="margin-bottom:12px">🚀 Quick Actions</h3>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button class="btn" onclick="openAddModal()">➕ Add Medicine</button>
-            <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"> Import Excel/CSV</button>
-            <input type="file" id="import-file" style="display:none" accept=".xlsx,.xls,.csv,.json" onchange="importData(this)">
+          <h3>Quick Actions</h3>
+          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="openAdd()">+ Add New Med</button>
+            <button class="btn btn-sec" onclick="go('bill')">🧾 New Bill</button>
           </div>
         </div>
       </div>
-      
-      <!-- Inventory -->
-      <div id="inventory" style="display:none">
+
+      <!-- INVENTORY -->
+      <div id="inv" class="hidden">
         <div class="card">
-          <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-            <input type="text" class="input" id="inv-search" placeholder="Search medicine..." style="flex:1;min-width:250px;margin:0" oninput="renderInventory()">
-            <button class="btn" onclick="openAddModal()">+ Add New</button>
+          <div style="display:flex; gap:10px; margin-bottom:12px;">
+            <input type="text" id="search" class="input" placeholder="Search medicines..." style="margin:0" oninput="renderInv()">
+            <button class="btn btn-primary" onclick="openAdd()">+ Add</button>
           </div>
-          <div style="overflow-x:auto;max-height:600px;overflow-y:auto">
-            <table id="inv-table"><thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Category</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead>
+              <tbody id="inv-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-      
-      <!-- Billing -->
-      <div id="billing" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 350px;gap:20px">
+
+      <!-- BILLING -->
+      <div id="bill" class="hidden">
+        <div style="display:grid; grid-template-columns: 1fr 300px; gap:20px;">
           <div>
             <div class="card">
-              <h3 style="margin-bottom:12px">Patient Details</h3>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <input type="text" class="input" id="bill-patient" placeholder="Patient Name *" style="margin:0">
-                <input type="text" class="input" id="bill-phone" placeholder="Phone" style="margin:0">
-              </div>
+              <h3>Patient Info</h3>
+              <input type="text" id="p-name" class="input" placeholder="Patient Name *" style="margin-top:10px;">
+              <input type="text" id="p-phone" class="input" placeholder="Phone (Optional)">
             </div>
             <div class="card">
-              <h3 style="margin-bottom:12px">Search & Add</h3>
-              <input type="text" class="input" id="bill-search" placeholder="Search medicine..." style="margin:0" oninput="renderBillSearch()">
-              <div id="bill-search-results" style="max-height:300px;overflow-y:auto;margin-top:12px"></div>
+              <h3>Add Items</h3>
+              <input type="text" id="b-search" class="input" placeholder="Type to search & add..." oninput="renderBillSearch()">
+              <div id="b-results" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
             </div>
           </div>
           <div>
-            <div class="card" style="position:sticky;top:20px">
-              <h3 style="margin-bottom:16px"> Cart (<span id="cart-count">0</span>)</h3>
-              <div id="cart-items"></div>
-              <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:16px;padding-top:16px">
-                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>Subtotal:</span><span id="cart-subtotal">0</span></div>
-                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>GST (5%):</span><span id="cart-gst">PKR 0</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:700;margin-top:12px;color:#00e676"><span>Total:</span><span id="cart-total">PKR 0</span></div>
-                <button class="btn" style="width:100%;margin-top:16px;padding:12px;font-size:16px" onclick="generateBill()">🧾 Generate Bill</button>
+            <div class="card" style="position:sticky; top:20px;">
+              <h3>Cart (<span id="c-count">0</span>)</h3>
+              <div id="cart-list" style="max-height:300px; overflow-y:auto; margin:10px 0;"></div>
+              <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="c-sub">0</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>GST (5%):</span><span id="c-gst">0</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:#00e676; margin-top:5px;">
+                  <span>Total:</span><span id="c-tot">PKR 0</span>                </div>
+                <button class="btn btn-primary" style="width:100%; margin-top:15px; padding:10px;" onclick="makeBill()">Generate Bill</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <!-- Orders -->
-      <div id="orders" style="display:none">
+
+      <!-- ALERTS -->
+      <div id="alert" class="hidden">
         <div class="card">
-          <h3 style="margin-bottom:16px"> Purchase Orders</h3>
-          <div id="order-items"></div>
-          <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
-            <button class="btn" onclick="placeOrder()" id="place-order-btn" disabled>📦 Place Order</button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Alerts -->
-      <div id="alerts" style="display:none"><div id="alerts-content"></div></div>
-            <!-- Reports -->
-      <div id="reports" style="display:none">
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-value" id="rep-today">0</div><div class="stat-label">Today's Sales</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-value" id="rep-month">PKR 0</div><div class="stat-label">This Month</div></div>
-        </div>
-        <div class="card">
-          <h3 style="margin-bottom:16px">🏆 Top Items</h3>
-          <div id="top-items"></div>
+          <h3 style="color:#ff5252; margin-bottom:15px;">⚠️ Low Stock & Out of Stock</h3>
+          <div id="alert-list"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Add/Edit Modal -->
-  <div id="add-modal" class="modal" onclick="if(event.target===this)closeAddModal()">
-    <div class="modal-content">
-      <h3 id="modal-title" style="margin-bottom:16px">Add Medicine</h3>
-      <div class="form-grid">
-        <input type="text" class="input full-width" id="med-name" placeholder="Medicine Name *">
-        <input type="text" class="input" id="med-category" placeholder="Category" value="Tablet">
-        <input type="number" class="input" id="med-stock" placeholder="Stock *">
-        <input type="number" class="input" id="med-price" placeholder="Price (PKR) *" step="0.01">
-        <input type="number" class="input" id="med-min" placeholder="Min Stock">
-        <input type="text" class="input full-width" id="med-supplier" placeholder="Supplier">
-        <input type="text" class="input full-width" id="med-phone" placeholder="Supplier Phone">
-        <input type="date" class="input full-width" id="med-expiry">
-      </div>
-      <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
-        <button class="btn" onclick="saveMedicine()">💾 Save</button>
+  <!-- ADD MEDICINE MODAL -->
+  <div id="add-modal" class="login-container" style="display:none; background:rgba(0,0,0,0.8);">
+    <div class="login-box" style="text-align:left;">
+      <h3 id="modal-title" style="margin-bottom:15px;">Add Medicine</h3>
+      <label>Name</label><input type="text" id="m-name" class="input">
+      <label>Category</label><input type="text" id="m-cat" class="input" value="General">
+      <label>Stock</label><input type="number" id="m-stock" class="input">
+      <label>Price (PKR)</label><input type="number" id="m-price" class="input">
+      <label>Min Stock Alert</label><input type="number" id="m-min" class="input" value="20">
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button class="btn btn-sec" style="flex:1;" onclick="document.getElementById('add-modal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="saveMed()">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Bill Preview Modal -->
-  <div id="bill-modal" class="modal" onclick="if(event.target===this)closeBillModal()">
-    <div class="bill-preview-wrap" onclick="event.stopPropagation()">
-      <div id="bill-print-area">
-        <div class="bill-header-print">
-          <div style="font-size:32px;margin-bottom:4px">💊</div>
-          <h2>Khan Medicos Pro</h2>
-          <p>Pakistan Medical Store System</p>
-          <p style="font-weight:700;color:#333;margin-top:6px">TAX INVOICE / BILL</p>
-        </div>
-        <div class="bill-meta" id="bill-meta"></div>
-        <table class="bill-table-print">
-          <thead>
-            <tr><th>#</th><th>Medicine</th><th>Qty</th><th>Rate</th><th style="text-align:right">Amount</th></tr>
-          </thead>          <tbody id="bill-items"></tbody>
-        </table>
-        <div class="bill-totals" id="bill-totals"></div>
-        <div class="bill-footer-print">
-          Aapki sehat hi hamari pehli zimmedari hai. Get well soon! 🙏<br>
-          Khan Medicos Pro • <span id="bill-store-footer"></span><br>
-          Contact: 9876543210 • www.khanmedicos.pk
-        </div>
+  <!-- BILL MODAL -->
+  <div id="bill-modal" onclick="if(event.target===this)document.getElementById('bill-modal').style.display='none'">
+    <div class="bill-paper">
+      <div class="bill-head">
+        <div style="font-size:24px;">💊</div>
+        <div style="font-size:20px; font-weight:800; color:#1a237e;">Khan Medicos</div>
+        <div style="font-size:12px; color:#555;">Professional Pharmacy</div>
       </div>
-      <div class="bill-actions no-print">
-        <button class="btn" onclick="printBill()">🖨️ Print</button>
-        <button class="btn btn-secondary" onclick="downloadPDF()">📄 Download PDF</button>
-        <button class="btn btn-danger" onclick="closeBillModal()">Close</button>
+      <div class="bill-meta" id="b-meta"></div>
+      <table class="bill-table">
+        <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+        <tbody id="b-body"></tbody>
+      </table>
+      <div class="bill-tot" id="b-tot"></div>
+      <div style="text-align:center; margin-top:20px; font-size:11px; color:#666;">
+        Aapki sehat hamari zimmedari hai.<br>Contact: 0300-1234567      </div>
+      <div class="bill-actions" style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
+        <button class="btn btn-primary" onclick="window.print()">️ Print</button>
+        <button class="btn btn-sec" style="color:black; border:1px solid #ccc;" onclick="document.getElementById('bill-modal').style.display='none'">Close</button>
       </div>
     </div>
   </div>
 
   <script>
-    // State
-    let state = {
-      currentUser: null,
-      currentStore: 'Main Branch',
-      inventory: {},
-      bills: {},
-      orders: {},
-      cart: [],
-      editId: null,
-      orderQty: {},
-      currentBill: null
-    };
-
-    // All 467 Pakistani Medicines
-    const pakistaniMedicines = [
-      {id:1,name:'Panadol (Paracetamol 500mg)',category:'Analgesic / Antipyretic',stock:200,price:30,supplier:'GSK',phone:'',minStock:50,packaging:'Strip of 10 Tabs'},
-      {id:2,name:'Calpol (Paracetamol 500mg)',category:'Analgesic / Antipyretic',stock:150,price:28,supplier:'GSK',phone:'',minStock:50,packaging:'Strip of 10 Tabs'},
-      {id:3,name:'Panadol Extra (Paracetamol 650mg)',category:'Analgesic / Antipyretic',stock:100,price:45,supplier:'GSK',phone:'',minStock:30,packaging:'Strip of 10 Tabs'},
-      {id:4,name:'Brufen (Ibuprofen 400mg)',category:'NSAID / Painkiller',stock:80,price:35,supplier:'Abbott',phone:'',minStock:30,packaging:'Strip of 10 Tabs'},
-      {id:5,name:'Brufen Syrup (Ibuprofen 200mg/5ml)',category:'NSAID / Pediatric',stock:40,price:110,supplier:'Abbott',phone:'',minStock:20,packaging:'90ml Bottle'},
-      {id:6,name:'Ponstan (Mefenamic Acid 250mg)',category:'NSAID / Painkiller',stock:60,price:40,supplier:'King Pharma',phone:'',minStock:25,packaging:'Strip of 10 Caps'},
-      {id:7,name:'Ponstan Forte (Mefenamic Acid 500mg)',category:'NSAID / Painkiller',stock:50,price:75,supplier:'King Pharma',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:8,name:'Dicloran (Diclofenac Sodium 50mg)',category:'NSAID / Painkiller',stock:70,price:60,supplier:'Sami',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:9,name:'Cataflam (Diclofenac Potassium 50mg)',category:'NSAID / Painkiller',stock:45,price:120,supplier:'Novartis',phone:'',minStock:15,packaging:'Strip of 10 Tabs'},
-      {id:10,name:'Loprin (Aspirin 75mg)',category:'Antiplatelet / Blood Thinner',stock:90,price:20,supplier:'Getz',phone:'',minStock:30,packaging:'Strip of 10 Tabs'},
-      {id:11,name:'Disprin (Aspirin 300mg)',category:'Analgesic',stock:100,price:25,supplier:'Bayer',phone:'',minStock:30,packaging:'Strip of 10 Tabs'},
-      {id:12,name:'Tramal (Tramadol HCl 50mg)',category:'Opioid Analgesic',stock:30,price:180,supplier:'Grünenthal',phone:'',minStock:10,packaging:'Strip of 10 Caps'},
-      {id:13,name:'Nubain Injection (Nalbuphine 10mg/ml)',category:'Analgesic',stock:20,price:90,supplier:'',phone:'',minStock:5,packaging:'1ml Ampoule'},
-      {id:14,name:'Tramadol Plus (Paracetamol/Tramadol)',category:'Analgesic',stock:40,price:150,supplier:'',phone:'',minStock:15,packaging:'Strip of 10 Tabs'},
-      {id:15,name:'Aclotec (Aceclofenac 100mg)',category:'NSAID / Painkiller',stock:55,price:90,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:16,name:'Risek (Omeprazole 20mg)',category:'Anti-Ulcer / PPI',stock:120,price:260,supplier:'Getz',phone:'',minStock:40,packaging:'Strip of 14 Caps'},
-      {id:17,name:'Risek Forte (Omeprazole 40mg)',category:'Anti-Ulcer / PPI',stock:80,price:420,supplier:'Getz',phone:'',minStock:30,packaging:'Strip of 14 Caps'},      {id:18,name:'Nexum (Esomeprazole 20mg)',category:'Anti-Ulcer / PPI',stock:90,price:220,supplier:'Hilton',phone:'',minStock:30,packaging:'Strip of 14 Caps'},
-      {id:19,name:'Nexum (Esomeprazole 40mg)',category:'Anti-Ulcer / PPI',stock:70,price:350,supplier:'Hilton',phone:'',minStock:25,packaging:'Strip of 14 Caps'},
-      {id:20,name:'Esame (Esomeprazole 20mg)',category:'Anti-Ulcer / PPI',stock:85,price:190,supplier:'',phone:'',minStock:30,packaging:'Strip of 14 Caps'},
-      {id:21,name:'Esame (Esomeprazole 40mg)',category:'Anti-Ulcer / PPI',stock:65,price:310,supplier:'',phone:'',minStock:25,packaging:'Strip of 14 Caps'},
-      {id:22,name:'Lanpro (Lansoprazole 30mg)',category:'Anti-Ulcer / PPI',stock:75,price:280,supplier:'',phone:'',minStock:25,packaging:'Strip of 14 Caps'},
-      {id:23,name:'Dexilant (Dexlansoprazole 60mg)',category:'Anti-Ulcer / PPI',stock:35,price:580,supplier:'',phone:'',minStock:10,packaging:'Strip of 14 Caps'},
-      {id:24,name:'Famopsin (Famotidine 40mg)',category:'H2 Blocker',stock:60,price:80,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:25,name:'Zantac (Ranitidine 150mg)',category:'H2 Blocker',stock:70,price:60,supplier:'',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:26,name:'Tagamet (Cimetidine 400mg)',category:'H2 Blocker',stock:50,price:70,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:27,name:'Maxolon (Metoclopramide 10mg)',category:'Anti-Emetic',stock:60,price:30,supplier:'Beecham',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:28,name:'Motilium (Domperidone 10mg)',category:'Anti-Emetic',stock:85,price:85,supplier:'Janssen',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:29,name:'Gravinate (Ondansetron 8mg)',category:'Anti-Emetic',stock:55,price:200,supplier:'Hilton',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:30,name:'Gravinate (Dimenhydrinate 50mg)',category:'Anti-Vertigo / Anti-Emetic',stock:70,price:25,supplier:'Hilton',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:31,name:'Gravinate Syrup (Dimenhydrinate)',category:'Anti-Emetic Pediatric',stock:40,price:70,supplier:'Hilton',phone:'',minStock:15,packaging:'60ml Bottle'},
-      {id:32,name:'Buscopan (Hyoscine Butylbromide 10mg)',category:'Anti-Spasmodic',stock:75,price:55,supplier:'Boehringer',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:33,name:'Buscopan Plus (Hyoscine Butylbromide 20mg)',category:'Anti-Spasmodic + Analgesic',stock:50,price:90,supplier:'Boehringer',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:34,name:'Colofac (Mebeverine HCl 135mg)',category:'Anti-Spasmodic / IBS',stock:45,price:140,supplier:'',phone:'',minStock:15,packaging:'Strip of 10 Tabs'},
-      {id:35,name:'Hydryllin (Phloroglucinol)',category:'Anti-Spasmodic',stock:55,price:110,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:36,name:'Hepamerz (Artichoke / Hepatic)',category:'Liver Supplement',stock:30,price:350,supplier:'',phone:'',minStock:10,packaging:'Strip of 10 Tabs'},
-      {id:37,name:'Silyver (Silymarin 200mg)',category:'Liver Supplement',stock:40,price:180,supplier:'',phone:'',minStock:15,packaging:'Strip of 10 Tabs'},
-      {id:38,name:'Flagyl (Metronidazole 400mg)',category:'Anti-Amoebic / Antibiotic',stock:100,price:35,supplier:'Sanofi',phone:'',minStock:30,packaging:'Strip of 10 Tabs'},
-      {id:39,name:'Flagyl Suspension (Metronidazole 200mg/5ml)',category:'Anti-Amoebic Pediatric',stock:50,price:75,supplier:'Sanofi',phone:'',minStock:20,packaging:'90ml Bottle'},
-      {id:40,name:'Ciproxin (Ciprofloxacin 500mg)',category:'Antibiotic',stock:60,price:290,supplier:'Bayer',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:41,name:'Novidat (Ciprofloxacin 250mg)',category:'Antibiotic',stock:70,price:140,supplier:'Getz',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:42,name:'Novidat (Ciprofloxacin 500mg)',category:'Antibiotic',stock:80,price:260,supplier:'Getz',phone:'',minStock:25,packaging:'Strip of 10 Tabs'},
-      {id:43,name:'Leflox (Levofloxacin 250mg)',category:'Antibiotic',stock:50,price:190,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Tabs'},
-      {id:44,name:'Leflox (Levofloxacin 500mg)',category:'Antibiotic',stock:45,price:340,supplier:'',phone:'',minStock:15,packaging:'Strip of 10 Tabs'},
-      {id:45,name:'Avelox (Moxifloxacin 400mg)',category:'Antibiotic',stock:25,price:450,supplier:'',phone:'',minStock:10,packaging:'Strip of 5 Tabs'},
-      {id:46,name:'Amoxil (Amoxicillin 250mg)',category:'Antibiotic',stock:90,price:90,supplier:'GSK',phone:'',minStock:30,packaging:'Strip of 10 Caps'},
-      {id:47,name:'Amoxil (Amoxicillin 500mg)',category:'Antibiotic',stock:100,price:160,supplier:'GSK',phone:'',minStock:30,packaging:'Strip of 10 Caps'},
-      {id:48,name:'Augmentin (Amoxicillin/Clavulanic Acid 1g)',category:'Antibiotic',stock:50,price:240,supplier:'GSK',phone:'',minStock:15,packaging:'Strip of 6 Tabs'},
-      {id:49,name:'Augmentin (Amoxicillin/Clavulanic Acid 625mg)',category:'Antibiotic',stock:60,price:170,supplier:'GSK',phone:'',minStock:20,packaging:'Strip of 6 Tabs'},
-      {id:50,name:'Augmentin Suspension (Amoxicillin/Clavulanic DS)',category:'Antibiotic Pediatric',stock:35,price:290,supplier:'GSK',phone:'',minStock:15,packaging:'90ml Bottle'}
+    // --- DATA & STATE ---
+    // Top ~50 Medicines embedded for instant load
+    var meds = [
+      {id:1, name:"Panadol (Paracetamol 500mg)", cat:"Analgesic", stock:200, price:30, min:50},
+      {id:2, name:"Calpol (Paracetamol 500mg)", cat:"Analgesic", stock:150, price:28, min:50},
+      {id:3, name:"Panadol Extra (650mg)", cat:"Analgesic", stock:100, price:45, min:30},
+      {id:4, name:"Brufen (Ibuprofen 400mg)", cat:"NSAID", stock:80, price:35, min:30},
+      {id:5, name:"Brufen Syrup", cat:"NSAID", stock:40, price:110, min:20},
+      {id:6, name:"Ponstan (Mefenamic Acid)", cat:"NSAID", stock:60, price:40, min:25},
+      {id:7, name:"Ponstan Forte", cat:"NSAID", stock:50, price:75, min:20},
+      {id:8, name:"Dicloran (Diclofenac 50mg)", cat:"NSAID", stock:70, price:60, min:25},
+      {id:9, name:"Cataflam (Diclofenac K)", cat:"NSAID", stock:45, price:120, min:15},
+      {id:10, name:"Loprin (Aspirin 75mg)", cat:"Cardiac", stock:90, price:20, min:30},
+      {id:11, name:"Disprin", cat:"Analgesic", stock:100, price:25, min:30},
+      {id:12, name:"Tramal 50mg", cat:"Opioid", stock:30, price:180, min:10},
+      {id:13, name:"Risek 20mg", cat:"Gastric", stock:120, price:260, min:40},
+      {id:14, name:"Risek Forte 40mg", cat:"Gastric", stock:80, price:420, min:30},
+      {id:15, name:"Nexum 20mg", cat:"Gastric", stock:90, price:220, min:30},
+      {id:16, name:"Nexum 40mg", cat:"Gastric", stock:70, price:350, min:25},
+      {id:17, name:"Maxolon 10mg", cat:"Anti-Emetic", stock:60, price:30, min:20},
+      {id:18, name:"Motilium 10mg", cat:"Anti-Emetic", stock:85, price:85, min:25},
+      {id:19, name:"Gravinate (Ondansetron)", cat:"Anti-Emetic", stock:55, price:200, min:20},
+      {id:20, name:"Buscopan 10mg", cat:"Spasmodic", stock:75, price:55, min:25},
+      {id:21, name:"Flagyl 400mg", cat:"Antibiotic", stock:100, price:35, min:30},
+      {id:22, name:"Ciproxin 500mg", cat:"Antibiotic", stock:60, price:290, min:20},
+      {id:23, name:"Novidat 500mg", cat:"Antibiotic", stock:80, price:260, min:25},
+      {id:24, name:"Amoxil 500mg", cat:"Antibiotic", stock:90, price:160, min:30},
+      {id:25, name:"Augmentin 1g", cat:"Antibiotic", stock:50, price:240, min:15},
+      {id:26, name:"Azomax 500mg", cat:"Antibiotic", stock:70, price:195, min:20},
+      {id:27, name:"Zyrtec 10mg", cat:"Allergy", stock:100, price:140, min:30},
+      {id:28, name:"Rigix 10mg", cat:"Allergy", stock:120, price:75, min:40},
+      {id:29, name:"Telfast 120mg", cat:"Allergy", stock:80, price:240, min:25},
+      {id:30, name:"Ventolin Inhaler", cat:"Respiratory", stock:40, price:220, min:15},
+      {id:31, name:"Norvasc 5mg", cat:"BP", stock:90, price:220, min:30},
+      {id:32, name:"Amcard 5mg", cat:"BP", stock:100, price:90, min:30},
+      {id:33, name:"Lasix 40mg", cat:"Diuretic", stock:100, price:35, min:30},
+      {id:34, name:"Glucophage 500mg", cat:"Diabetes", stock:120, price:40, min:40},
+      {id:35, name:"Neurobion", cat:"Vitamin", stock:100, price:115, min:30},
+      {id:36, name:"Evion 400", cat:"Vitamin", stock:90, price:110, min:30},
+      {id:37, name:"Sangobion", cat:"Iron", stock:80, price:120, min:25},
+      {id:38, name:"Viagra 50mg", cat:"ED", stock:20, price:1200, min:5},      {id:39, name:"Zega 100mg", cat:"ED", stock:30, price:280, min:10},
+      {id:40, name:"Metformin 850mg", cat:"Diabetes", stock:110, price:65, min:40},
+      {id:41, name:"Amaryl 2mg", cat:"Diabetes", stock:80, price:250, min:25},
+      {id:42, name:"Tenormin 50mg", cat:"BP", stock:80, price:95, min:25},
+      {id:43, name:"Concor 5mg", cat:"BP", stock:90, price:210, min:30},
+      {id:44, name:"Lipiget 10mg", cat:"Cholesterol", stock:70, price:210, min:25},
+      {id:45, name:"Lipitor 10mg", cat:"Cholesterol", stock:50, price:390, min:15},
+      {id:46, name:"Clarityne 10mg", cat:"Allergy", stock:100, price:180, min:30},
+      {id:47, name:"Ventolin Syrup", cat:"Respiratory", stock:45, price:95, min:15},
+      {id:48, name:"Prospan Syrup", cat:"Cough", stock:35, price:290, min:10},
+      {id:49, name:"Imodium", cat:"Diarrhea", stock:60, price:65, min:20},
+      {id:50, name:"Gelusil", cat:"Antacid", stock:100, price:45, min:30}
     ];
 
-    // Add remaining medicines (51-467) - continuing from Excel data
-    // Note: Due to message length limits, I'm showing first 50. 
-    // In actual implementation, all 467 would be here.
-    // For complete code, you would add medicines 51-467 following same pattern
-    
-    // ... (medicines 51-467 would continue here in actual file)
-    
-    // For demo, let me add a few more critical ones:
-    {id:51,name:'Velosef (Cephradine 250mg)',category:'Antibiotic',stock:55,price:180,supplier:'',phone:'',minStock:20,packaging:'Strip of 10 Caps'},
-    {id:52,name:'Velosef (Cephradine 500mg)',category:'Antibiotic',stock:45,price:330,supplier:'',phone:'',minStock:15,packaging:'Strip of 10 Caps'},
-    {id:53,name:'Caracef (Cefixime 400mg)',category:'Antibiotic',stock:40,price:320,supplier:'',phone:'',minStock:15,packaging:'Strip of 5 Caps'},
-    {id:54,name:'Cefspan (Cefixime 400mg)',category:'Antibiotic',stock:35,price:360,supplier:'',phone:'',minStock:15,packaging:'Strip of 5 Caps'},
-    {id:55,name:'Cefspan Suspension (Cefixime 100mg/5ml)',category:'Antibiotic Pediatric',stock:30,price:240,supplier:'',phone:'',minStock:10,packaging:'30ml Bottle'},
-    {id:56,name:'Zacef (Cefuroxime Axetil 250mg)',category:'Antibiotic',stock:30,price:390,supplier:'',phone:'',minStock:10,packaging:'Strip of 10 Tabs'},
-    {id:57,name:'Zinacef (Cefuroxime Axetil 500mg)',category:'Antibiotic',stock:25,price:680,supplier:'',phone:'',minStock:10,packaging:'Strip of 10 Tabs'},    {id:58,name:'Azomax (Azithromycin 250mg)',category:'Antibiotic',stock:50,price:210,supplier:'Getz',phone:'',minStock:20,packaging:'Strip of 6 Caps'},
-    {id:59,name:'Azomax (Azithromycin 500mg)',category:'Antibiotic',stock:60,price:195,supplier:'Getz',phone:'',minStock:20,packaging:'Strip of 3 Tabs'},
-    {id:60,name:'Zithromax (Azithromycin 500mg)',category:'Antibiotic',stock:40,price:240,supplier:'Pfizer',phone:'',minStock:15,packaging:'Strip of 3 Tabs'}
-    // ... continue till 467
+    var cart = [];
+    var bills = JSON.parse(localStorage.getItem('khan_bills')) || [];
+    var editId = null;
 
-    function handleLogin() {
-      var user = document.getElementById('login-user').value.trim();
-      var pass = document.getElementById('login-pass').value;
-      var errEl = document.getElementById('login-error');
-      errEl.style.display = 'none'; errEl.textContent = '';
-      try {
-        if (user === 'admin' && pass === 'admin123') loginUser('Admin', 'admin');
-        else if (user === 'staff' && pass === 'staff123') loginUser('Staff', 'staff');
-        else { errEl.textContent = 'Galat ID/Password. Use admin/admin123'; errEl.style.display = 'block'; }
-      } catch (e) { errEl.textContent = 'Login Error: ' + e.message; errEl.style.display = 'block'; }
+    // --- INIT ---
+    function doLogin() {
+      var u = document.getElementById('user').value;
+      var p = document.getElementById('pass').value;
+      if ((u==='admin' && p==='admin123') || (u==='staff' && p==='staff123')) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').classList.remove('hidden');
+        renderDash();
+        renderInv();
+      } else {
+        document.getElementById('login-err').style.display = 'block';
+      }
     }
-
-    function loginUser(roleName, roleType) {
-      state.currentUser = { name: roleName, role: roleType };
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('user-info').textContent = roleName + ' • ' + state.currentStore;
-      initApp();
-      showNotification('Login Successful! Welcome ' + roleName);
-    }
-
+    
     function logout() { location.reload(); }
 
-    function initApp() {
-      try {
-        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
-        var saved = localStorage.getItem(key);
-        if (saved) {
-          var data = JSON.parse(saved);
-          state.inventory[state.currentStore] = data.inventory || [];
-          state.bills[state.currentStore] = data.bills || [];
-          state.orders[state.currentStore] = data.orders || [];
-        } else {
-          // Initialize with all 467 Pakistani medicines
-          state.inventory[state.currentStore] = JSON.parse(JSON.stringify(pakistaniMedicines));
-          state.bills[state.currentStore] = [];
-          state.orders[state.currentStore] = [];
-        }
-        updateDashboard();
-      } catch (e) { console.error('Init Error', e); showNotification('App Error: ' + e.message, 'error'); }
+    function go(tab) {
+      document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+      document.getElementById(tab).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (tab==='dash') renderDash();
+      if (tab==='inv') renderInv();
+      if (tab==='bill') { renderBillSearch(); renderCart(); }
+      if (tab==='alert') renderAlert();
     }
 
-    function saveData() {
-      try {
-        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');        localStorage.setItem(key, JSON.stringify({
-          inventory: state.inventory[state.currentStore],
-          bills: state.bills[state.currentStore],
-          orders: state.orders[state.currentStore]
-        }));
-      } catch(e) { console.log('Save failed', e); }
+    // --- RENDER FUNCTIONS ---
+    function renderDash() {
+      document.getElementById('d-total').innerText = meds.length;
+      var val = meds.reduce((s,m)=>s+(m.stock*m.price), 0);      document.getElementById('d-val').innerText = 'PKR '+val;
+      document.getElementById('d-out').innerText = meds.filter(m=>m.stock===0).length;
+      
+      var today = new Date().toLocaleDateString();
+      var rev = bills.filter(b=>b.date===today).reduce((s,b)=>s+b.total,0);
+      document.getElementById('d-rev').innerText = 'PKR '+rev;
     }
 
-    function changeStore() {
-      state.currentStore = document.getElementById('store-select').value;
-      state.cart = [];
-      document.getElementById('user-info').textContent = state.currentUser.name + ' • ' + state.currentStore;
-      initApp();
-      showNotification('Switched to ' + state.currentStore);
-    }
-
-    function showTab(tab) {
-      ['dashboard','inventory','billing','orders','alerts','reports'].forEach(t => {
-        var el = document.getElementById(t); if (el) el.style.display = t === tab ? 'block' : 'none';
-      });
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      if (event && event.target) event.target.classList.add('active');
-      if (tab === 'dashboard') updateDashboard();
-      if (tab === 'inventory') renderInventory();
-      if (tab === 'billing') renderBillSearch();
-      if (tab === 'orders') renderOrders();
-      if (tab === 'alerts') renderAlerts();
-      if (tab === 'reports') renderReports();
-    }
-
-    function updateDashboard() {
-      var inv = state.inventory[state.currentStore] || [];
-      var bills = state.bills[state.currentStore] || [];
-      document.getElementById('stat-total').textContent = inv.length;
-      document.getElementById('stat-value').textContent = 'PKR ' + inv.reduce((s,i)=>s+(i.stock*i.price),0).toFixed(0);
-      document.getElementById('stat-low').textContent = inv.filter(i => i.stock<=i.minStock && i.stock>0).length;
-      document.getElementById('stat-out').textContent = inv.filter(i => i.stock===0).length;
-      document.getElementById('stat-bills').textContent = bills.length;
-      var today = new Date().toISOString().split('T')[0];
-      document.getElementById('stat-revenue').textContent = 'PKR ' + bills.filter(b=>b.date&&b.date.startsWith(today)).reduce((s,b)=>s+b.total,0).toFixed(0);
-    }
-
-    function renderInventory() {
-      var inv = state.inventory[state.currentStore] || [];
-      var search = document.getElementById('inv-search').value.toLowerCase();
-      var filtered = inv.filter(i => i.name.toLowerCase().includes(search) || i.category.toLowerCase().includes(search));
-      var tbody = document.querySelector('#inv-table tbody');
-      if (!tbody) return;
-      tbody.innerHTML = filtered.map(item => `
-        <tr>          <td><b>${item.name}</b></td><td>${item.category}</td>
-          <td style="color:${item.stock===0?'#ff5252':item.stock<=item.minStock?'#ffc107':'#00e676'};font-weight:700">${item.stock}</td>
-          <td>PKR ${item.price}</td>
-          <td>${item.stock===0?'<span class="badge badge-out">Out</span>':item.stock<=item.minStock?'<span class="badge badge-low">Low</span>':'<span class="badge badge-ok">OK</span>'}</td>
+    function renderInv() {
+      var q = document.getElementById('search').value.toLowerCase();
+      var filtered = meds.filter(m => m.name.toLowerCase().includes(q) || m.cat.toLowerCase().includes(q));
+      var html = '';
+      filtered.forEach(m => {
+        var status = m.stock===0 ? '<span style="color:#ff5252">Out</span>' : (m.stock<=m.min ? '<span style="color:#ffc107">Low</span>' : 'OK');
+        html += `<tr>
+          <td><b>${m.name}</b></td>
+          <td>${m.cat}</td>
+          <td style="color:${m.stock===0?'#ff5252':m.stock<=m.min?'#ffc107':'#00e676'}">${m.stock}</td>
+          <td>PKR ${m.price}</td>
           <td>
-            <button class="btn btn-secondary" style="padding:6px 10px;font-size:12px" onclick="editMed(${item.id})">Edit</button>
-            <button class="btn" style="padding:6px 10px;font-size:12px" onclick="addToCart(${item.id})">Add</button>
-            <button class="btn btn-danger" style="padding:6px 10px;font-size:12px" onclick="deleteMed(${item.id})">Delete</button>
+            <button class="btn btn-sec" style="padding:4px 8px; font-size:11px;" onclick="openAdd(${m.id})">Edit</button>
+            <button class="btn btn-primary" style="padding:4px 8px; font-size:11px;" onclick="addToCart(${m.id})">Add</button>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delMed(${m.id})">Del</button>
           </td>
-        </tr>
-      `).join('');
+        </tr>`;
+      });
+      document.getElementById('inv-body').innerHTML = html;
     }
 
-    function openAddModal() {
-      state.editId = null;
-      document.getElementById('modal-title').textContent = 'Add Medicine';
-      ['med-name','med-stock','med-price','med-min','med-supplier','med-phone','med-expiry'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('med-category').value = 'Tablet';
-      document.getElementById('add-modal').classList.add('active');
-    }
-    function closeAddModal() { document.getElementById('add-modal').classList.remove('active'); }
-    
-    function editMed(id) {
-      var inv = state.inventory[state.currentStore];
-      var item = inv.find(i => i.id === id);
-      if (!item) return;
-      state.editId = id;
-      document.getElementById('modal-title').textContent = 'Edit Medicine';
-      document.getElementById('med-name').value = item.name;
-      document.getElementById('med-category').value = item.category;
-      document.getElementById('med-stock').value = item.stock;
-      document.getElementById('med-price').value = item.price;
-      document.getElementById('med-min').value = item.minStock;
-      document.getElementById('med-supplier').value = item.supplier || '';
-      document.getElementById('med-phone').value = item.phone || '';
-      document.getElementById('med-expiry').value = item.expiry || '';
-      document.getElementById('add-modal').classList.add('active');
-    }
-    
-    function deleteMed(id) {
-      if (!confirm('Are you sure you want to delete this medicine?')) return;
-      state.inventory[state.currentStore] = state.inventory[state.currentStore].filter(i => i.id !== id);
-      saveData();
-      showNotification('Medicine deleted successfully!');
-      updateDashboard();
-      renderInventory();
-    }
-
-    function saveMedicine() {
-      var name = document.getElementById('med-name').value;      var stock = parseInt(document.getElementById('med-stock').value) || 0;
-      var price = parseFloat(document.getElementById('med-price').value) || 0;
-      if (!name || !price) { showNotification('Name and Price required', 'error'); return; }
-      var med = { name, category: document.getElementById('med-category').value || 'Tablet', stock, price, minStock: parseInt(document.getElementById('med-min').value)||0, supplier: document.getElementById('med-supplier').value, phone: document.getElementById('med-phone').value, expiry: document.getElementById('med-expiry').value };
-      if (state.editId) {
-        var idx = state.inventory[state.currentStore].findIndex(i => i.id === state.editId);
-        if (idx >= 0) state.inventory[state.currentStore][idx] = { ...state.inventory[state.currentStore][idx], ...med };
-        showNotification('Updated!');
-      } else {
-        med.id = Date.now(); state.inventory[state.currentStore].push(med); showNotification('Added!');
+    function renderAlert() {
+      var low = meds.filter(m => m.stock <= m.min);
+      var html = '';
+      if(low.length===0) html = '<p style="text-align:center; color:#90a4ae;">All stock is healthy ✅</p>';
+      else {
+        low.forEach(m => {
+          html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between;">
+            <span>${m.name}</span>
+            <span style="color:${m.stock===0?'#ff5252':'#ffc107'}">Stock: ${m.stock} (Min: ${m.min})</span>
+          </div>`;
+        });
       }
-      saveData(); closeAddModal(); updateDashboard(); renderInventory();
+      document.getElementById('alert-list').innerHTML = html;
     }
 
-    function addToCart(id) {
-      var inv = state.inventory[state.currentStore];
-      var item = inv.find(i => i.id === id);
-      if (!item || item.stock === 0) { showNotification('Out of stock!', 'error'); return; }
-      var existing = state.cart.find(c => c.id === id);
-      if (existing) {
-        if (existing.qty >= item.stock) { showNotification('Not enough stock!', 'error'); return; }
-        existing.qty++;
-      } else { state.cart.push({ ...item, qty: 1 }); }
-      showNotification('Added to cart'); renderCart();
+    function renderBillSearch() {
+      var q = document.getElementById('b-search').value.toLowerCase();
+      var list = meds.filter(m => m.name.toLowerCase().includes(q));
+      var html = '';
+      list.slice(0, 8).forEach(m => {
+        html += `<div style="padding:8px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:6px; display:flex; justify-content:space-between; align-items:center;">          <div>
+            <div style="font-weight:600; font-size:13px;">${m.name}</div>
+            <div style="font-size:11px; color:#90a4ae;">Stock: ${m.stock} | PKR ${m.price}</div>
+          </div>
+          <button class="btn btn-primary" style="padding:4px 10px; font-size:12px;" onclick="addToCart(${m.id})">+</button>
+        </div>`;
+      });
+      document.getElementById('b-results').innerHTML = html;
     }
 
     function renderCart() {
-      var container = document.getElementById('cart-items');
-      document.getElementById('cart-count').textContent = state.cart.length;
-      if (state.cart.length === 0) { container.innerHTML = '<p style="text-align:center;color:#90a4ae;padding:20px">Empty</p>'; }
-      else {
-        container.innerHTML = state.cart.map(item => `
-          <div class="cart-item">
-            <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">PKR ${item.price} × ${item.qty}</div></div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <button class="qty-btn" onclick="updateCartQty(${item.id},-1)">-</button>
-              <span style="font-weight:700">${item.qty}</span>
-              <button class="qty-btn" onclick="updateCartQty(${item.id},1)">+</button>
-              <button class="btn btn-danger" style="padding:4px 8px;margin-left:8px" onclick="removeFromCart(${item.id})">×</button>
+      document.getElementById('c-count').innerText = cart.length;
+      var html = '';
+      var sub = 0;
+      cart.forEach((c, i) => {
+        var tot = c.price * c.qty;
+        sub += tot;
+        html += `<div style="padding:8px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:6px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px;">
+            <span>${c.name}</span>
+            <span style="font-weight:700; color:#00e676;">PKR ${tot}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="btn btn-sec" style="padding:2px 6px;" onclick="chgQty(${i}, -1)">-</button>
+              <span>${c.qty}</span>
+              <button class="btn btn-sec" style="padding:2px 6px;" onclick="chgQty(${i}, 1)">+</button>
             </div>
+            <button class="btn btn-danger" style="padding:2px 6px; font-size:10px;" onclick="rmCart(${i})">×</button>
           </div>
-        `).join('');
-      }
-      var subtotal = state.cart.reduce((s,i)=>s+(i.price*i.qty),0);
-      var gst = subtotal * 0.05; var total = subtotal + gst;
-      document.getElementById('cart-subtotal').textContent = 'PKR ' + subtotal.toFixed(2);
-      document.getElementById('cart-gst').textContent = 'PKR ' + gst.toFixed(2);
-      document.getElementById('cart-total').textContent = 'PKR ' + total.toFixed(2);
-    }
-    function updateCartQty(id, change) {
-      var item = state.cart.find(c => c.id === id);
-      var invItem = state.inventory[state.currentStore].find(i => i.id === id);
-      if (!item || !invItem) return;
-      var newQty = item.qty + change;
-      if (newQty <= 0) removeFromCart(id);
-      else if (newQty <= invItem.stock) { item.qty = newQty; renderCart(); }
-      else showNotification('Not enough stock!', 'error');
-    }
-    function removeFromCart(id) { state.cart = state.cart.filter(c => c.id !== id); renderCart(); }
-
-    function renderBillSearch() {
-      var inv = state.inventory[state.currentStore];
-      var search = document.getElementById('bill-search').value.toLowerCase();
-      var container = document.getElementById('bill-search-results');
-      if (!search) { container.innerHTML = ''; return; }
-      var filtered = inv.filter(i => i.name.toLowerCase().includes(search)).slice(0, 5);
-      container.innerHTML = filtered.map(item => `
-        <div class="cart-item" style="cursor:pointer" onclick="addToCart(${item.id});document.getElementById('bill-search').value='';renderBillSearch()">
-          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Stock: ${item.stock} | PKR ${item.price}</div></div>
-          <button class="btn" style="padding:6px 12px">+ Add</button>
-        </div>
-      `).join('');
-    }
-
-    function generateBill() {
-      var patient = document.getElementById('bill-patient').value;
-      if (!patient) { showNotification('Patient name required!', 'error'); return; }
-      if (state.cart.length === 0) { showNotification('Cart empty!', 'error'); return; }
-      
-      var subtotal = state.cart.reduce((s,i)=>s+(i.price*i.qty),0);
-      var gst = subtotal * 0.05; var total = subtotal + gst;
-      
-      state.currentBill = {
-        id: 'BILL-' + Date.now(), date: new Date().toLocaleString(), patient, phone: document.getElementById('bill-phone').value,
-        items: [...state.cart], subtotal, gst, total, store: state.currentStore, cashier: state.currentUser.name
-      };
-      
-      state.cart.forEach(c => {
-        var item = state.inventory[state.currentStore].find(i => i.id === c.id);
-        if (item) item.stock -= c.qty;
+        </div>`;
       });
-      state.bills[state.currentStore].push(state.currentBill);
-      saveData();
-      state.cart = [];
-      document.getElementById('bill-patient').value = ''; document.getElementById('bill-phone').value = '';
+      document.getElementById('cart-list').innerHTML = html;
       
-      showBillPreview(state.currentBill);
-      updateDashboard(); renderInventory();
-    }
-    function showBillPreview(bill) {
-      document.getElementById('bill-meta').innerHTML = `
-        <div><b>Bill No:</b> ${bill.id}</div><div><b>Date:</b> ${bill.date}</div>
-        <div><b>Patient:</b> ${bill.patient}</div>${bill.phone?`<div><b>Phone:</b> ${bill.phone}</div>`:''}
-        <div><b>Cashier:</b> ${bill.cashier}</div><div><b>Store:</b> ${bill.store}</div>
-      `;
-      document.getElementById('bill-items').innerHTML = bill.items.map((item, idx) => `
-        <tr><td>${idx+1}</td><td>${item.name}</td><td style="text-align:center">${item.qty}</td><td style="text-align:center">PKR ${item.price.toFixed(2)}</td><td style="text-align:right;font-weight:600">PKR ${(item.price*item.qty).toFixed(2)}</td></tr>
-      `).join('');
-      document.getElementById('bill-totals').innerHTML = `
-        <div><span>Subtotal:</span><span>PKR ${bill.subtotal.toFixed(2)}</span></div>
-        <div><span>GST (5%):</span><span>PKR ${bill.gst.toFixed(2)}</span></div>
-        <div class="bill-grand"><span>TOTAL:</span><span>PKR ${bill.total.toFixed(2)}</span></div>
-      `;
-      document.getElementById('bill-store-footer').textContent = bill.store;
-      document.getElementById('bill-modal').classList.add('active');
+      var gst = sub * 0.05;
+      var tot = sub + gst;
+      document.getElementById('c-sub').innerText = 'PKR '+sub.toFixed(0);
+      document.getElementById('c-gst').innerText = 'PKR '+gst.toFixed(0);
+      document.getElementById('c-tot').innerText = 'PKR '+tot.toFixed(0);
     }
 
-    function closeBillModal() { document.getElementById('bill-modal').classList.remove('active'); }
-    function printBill() { window.print(); }
-    function downloadPDF() {
-      const element = document.getElementById('bill-print-area');
-      const opt = {
-        margin: 0.4, filename: `${state.currentBill.id}_KhanMedicos.pdf`,
-        image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-
-    function renderOrders() {
-      var inv = state.inventory[state.currentStore];
-      var low = inv.filter(i => i.stock <= i.minStock);
-      var container = document.getElementById('order-items');
-      if (low.length === 0) {
-        container.innerHTML = '<p style="text-align:center;color:#00e676;padding:20px">✅ All in stock!</p>';
-        document.getElementById('place-order-btn').disabled = true; return;
+    // --- ACTIONS ---
+    function addToCart(id) {
+      var item = meds.find(m => m.id === id);
+      if (item.stock <= 0) { alert('Out of stock!'); return; }
+      var ex = cart.find(c => c.id === id);
+      if (ex) {
+        if (ex.qty >= item.stock) { alert('Not enough stock!'); return; }
+        ex.qty++;
+      } else {        cart.push({ ...item, qty: 1 });
       }
-      container.innerHTML = low.map(item => `
-        <div class="cart-item">
-          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Current: ${item.stock} | Min: ${item.minStock}</div></div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="number" class="input" style="width:80px;margin:0;padding:6px" placeholder="Qty" min="1" value="${state.orderQty[item.id]||''}" onchange="updateOrderQty(${item.id},this.value)">
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('place-order-btn').disabled = true;
+      renderCart();
     }
-    function updateOrderQty(id, qty) {      state.orderQty[id] = parseInt(qty) || 0; renderOrders();
-      document.getElementById('place-order-btn').disabled = !Object.values(state.orderQty).some(q => q > 0);
+
+    function chgQty(i, d) {
+      var item = cart[i];
+      var med = meds.find(m => m.id === item.id);
+      if (item.qty + d <= 0) rmCart(i);
+      else if (item.qty + d <= med.stock) { item.qty += d; renderCart(); }
+      else { alert('Max stock reached!'); }
     }
-    function placeOrder() {
-      var items = Object.entries(state.orderQty).filter(([id,qty]) => qty > 0).map(([id,qty]) => {
-        var item = state.inventory[state.currentStore].find(i => i.id == id); return { ...item, orderQty: qty };
+
+    function rmCart(i) { cart.splice(i, 1); renderCart(); }
+
+    function makeBill() {
+      var pName = document.getElementById('p-name').value;
+      if (!pName) { alert('Enter patient name!'); return; }
+      if (cart.length === 0) { alert('Cart is empty!'); return; }
+
+      var sub = cart.reduce((s,c)=>s+(c.price*c.qty), 0);
+      var gst = sub * 0.05;
+      var tot = sub + gst;
+
+      // Update Stock
+      cart.forEach(c => {
+        var med = meds.find(m => m.id === c.id);
+        if (med) med.stock -= c.qty;
       });
-      if (items.length === 0) return;
-      var order = { id: 'ORD-' + Date.now(), date: new Date().toLocaleString(), status: 'Placed', items };
-      state.orders[state.currentStore].push(order); saveData(); state.orderQty = {};
-      showNotification('Order Placed!'); renderOrders();
-    }
 
-    function renderAlerts() {
-      var inv = state.inventory[state.currentStore];
-      var low = inv.filter(i => i.stock <= i.minStock && i.stock > 0);
-      var out = inv.filter(i => i.stock === 0); var html = '';
-      if (out.length > 0) html += `<div class="card" style="border-left:4px solid #ff5252"><h3 style="color:#ff5252;margin-bottom:12px">🚫 Out of Stock</h3><table><thead><tr><th>Medicine</th><th>Supplier</th></tr></thead><tbody>${out.map(i=>`<tr><td><b>${i.name}</b></td><td>${i.supplier}</td></tr>`).join('')}</tbody></table></div>`;
-      if (low.length > 0) html += `<div class="card" style="border-left:4px solid #ffc107"><h3 style="color:#ffc107;margin-bottom:12px">⚠️ Low Stock</h3><table><thead><tr><th>Medicine</th><th>Current</th><th>Min</th></tr></thead><tbody>${low.map(i=>`<tr><td><b>${i.name}</b></td><td>${i.stock}</td><td>${i.minStock}</td></tr>`).join('')}</tbody></table></div>`;
-      if (!html) html = '<div class="card" style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:16px">✅</div><h3>All stocks healthy!</h3></div>';
-      document.getElementById('alerts-content').innerHTML = html;
-    }
-
-    function renderReports() {
-      var bills = state.bills[state.currentStore];
-      var today = new Date().toISOString().split('T')[0];
-      document.getElementById('rep-today').textContent = 'PKR ' + bills.filter(b=>b.date&&b.date.startsWith(today)).reduce((s,b)=>s+b.total,0).toFixed(0);
-      document.getElementById('rep-month').textContent = 'PKR ' + bills.reduce((s,b)=>s+b.total,0).toFixed(0);
-      var itemSales = {}; bills.forEach(b=>b.items.forEach(i=>{itemSales[i.name]=(itemSales[i.name]||0)+i.qty;}));
-      var top = Object.entries(itemSales).sort((a,b)=>b[1]-a[1]).slice(0,5);
-      var max = top.length ? top[0][1] : 1;
-      document.getElementById('top-items').innerHTML = top.map(([name,qty])=>`
-        <div class="chart-bar"><div class="chart-label">${name}</div><div class="chart-fill"><div class="chart-value" style="width:${(qty/max)*100}%"></div><div class="chart-text">${qty}</div></div></div>
-      `).join('');
-    }
-
-    function exportData() {
-      var data = { inventory: state.inventory[state.currentStore], bills: state.bills[state.currentStore], orders: state.orders[state.currentStore] };
-      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'khan_medicos_pakistan.json'; a.click();
-      showNotification('Exported!');
-    }
-    function importData(input) {
-      var file = input.files[0]; if (!file) return;
-      var reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          var data = JSON.parse(e.target.result);
-          if (data.inventory) {
-            var count = data.inventory.length;            if (confirm(count + ' medicines import hongi. Continue?')) {
-              state.inventory[state.currentStore] = data.inventory;
-              if (data.bills) state.bills[state.currentStore] = data.bills;
-              if (data.orders) state.orders[state.currentStore] = data.orders;
-              saveData(); showNotification(count + ' medicines imported!'); updateDashboard(); renderInventory();
-            }
-          }
-        } catch(err) { showNotification('Import failed', 'error'); }
+      // Save Bill
+      var bill = {
+        id: 'INV-' + Date.now().toString().slice(-6),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        patient: pName,
+        phone: document.getElementById('p-phone').value,
+        items: [...cart],
+        sub, gst, tot
       };
-      reader.readAsText(file); input.value = '';
+      bills.push(bill);
+      localStorage.setItem('khan_bills', JSON.stringify(bills));
+
+      // Show Preview
+      showBill(bill);
+      
+      // Reset
+      cart = [];
+      document.getElementById('p-name').value = '';
+      document.getElementById('p-phone').value = '';      renderCart();
+      renderDash(); // Update stats
     }
 
-    function showNotification(msg, type='success') {
-      var n = document.createElement('div'); n.className = 'notification' + (type==='error'?' error':'');
-      n.textContent = msg; document.body.appendChild(n); setTimeout(() => n.remove(), 3000);
+    function showBill(b) {
+      document.getElementById('b-meta').innerHTML = `
+        <div><b>Bill #:</b> ${b.id}</div><div><b>Date:</b> ${b.date} ${b.time}</div>
+        <div><b>Patient:</b> ${b.patient}</div>
+        ${b.phone ? `<div><b>Phone:</b> ${b.phone}</div>` : ''}
+      `;
+      var rows = '';
+      b.items.forEach(i => {
+        rows += `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price}</td><td>${i.price*i.qty}</td></tr>`;
+      });
+      document.getElementById('b-body').innerHTML = rows;
+      document.getElementById('b-tot').innerHTML = `
+        <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>${b.sub.toFixed(0)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>GST (5%):</span><span>${b.gst.toFixed(0)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; margin-top:5px;"><span>TOTAL:</span><span>PKR ${b.tot.toFixed(0)}</span></div>
+      `;
+      document.getElementById('bill-modal').style.display = 'flex';
     }
-    function toggleTheme() {
-      var isDark = document.body.style.background !== 'white';
-      document.body.style.background = isDark ? '#f5f7fa' : '#0f1117';
-      document.body.style.color = isDark ? '#1a237e' : '#e8eaf6';
+
+    function openAdd(id) {
+      editId = id || null;
+      document.getElementById('modal-title').innerText = id ? 'Edit Medicine' : 'Add Medicine';
+      if (id) {
+        var m = meds.find(x => x.id === id);
+        document.getElementById('m-name').value = m.name;
+        document.getElementById('m-cat').value = m.cat;
+        document.getElementById('m-stock').value = m.stock;
+        document.getElementById('m-price').value = m.price;
+        document.getElementById('m-min').value = m.min;
+      } else {
+        document.getElementById('m-name').value = '';
+        document.getElementById('m-cat').value = 'General';
+        document.getElementById('m-stock').value = '';
+        document.getElementById('m-price').value = '';
+        document.getElementById('m-min').value = '20';
+      }
+      document.getElementById('add-modal').style.display = 'flex';
+    }
+
+    function saveMed() {
+      var name = document.getElementById('m-name').value;
+      var cat = document.getElementById('m-cat').value;
+      var stock = parseInt(document.getElementById('m-stock').value);
+      var price = parseInt(document.getElementById('m-price').value);
+      var min = parseInt(document.getElementById('m-min').value);
+      if (!name || !price) { alert('Fill name and price'); return; }
+
+      if (editId) {
+        var m = meds.find(x => x.id === editId);
+        m.name = name; m.cat = cat; m.stock = stock; m.price = price; m.min = min;
+      } else {
+        meds.push({ id: Date.now(), name, cat, stock, price, min });
+      }
+      document.getElementById('add-modal').style.display = 'none';
+      renderInv();
+      renderDash();
+    }
+
+    function delMed(id) {
+      if (confirm('Delete this medicine?')) {
+        meds = meds.filter(m => m.id !== id);
+        renderInv();
+        renderDash();
+      }
     }
   </script>
 </body>
