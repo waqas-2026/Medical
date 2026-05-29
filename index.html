@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro - FIXED</title>
+  <title>Khan Medicos Pro - FINAL FIXED</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -581,13 +581,12 @@
     function closeBillModal() { document.getElementById('bill-modal').classList.remove('active'); }
     function viewBill(id) { var bill = bills.find(b => b.id === id); if (bill) showBill(bill); }
 
-    // FIXED ADMIN FUNCTIONS - Removed the blocking check
+    // FIXED - NO ADMIN CHECK AT ALL
     function openAdd() {
-      // REMOVED: if (currentUserRole !== 'Admin') return;
       editId = null;
       document.getElementById('modal-title').innerText = 'Add Medicine';
-      document.getElementById('m-name').value = '';      document.getElementById('m-cat').value = 'General';
-      document.getElementById('m-stock').value = '';
+      document.getElementById('m-name').value = '';
+      document.getElementById('m-cat').value = 'General';      document.getElementById('m-stock').value = '';
       document.getElementById('m-price').value = '';
       document.getElementById('m-min').value = '20';
       document.getElementById('m-expiry').value = '';
@@ -635,8 +634,8 @@
       }
       localStorage.setItem('khan_meds', JSON.stringify(meds));
       closeModal();
-      renderDash();      searchAndRender();
-    }
+      renderDash();
+      searchAndRender();    }
 
     function delMed(id) {
       if (confirm('Delete this medicine permanently?')) {
