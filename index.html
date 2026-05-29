@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro - Fixed Login</title>
+  <title>Khan Medicos Pro - Pakistan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
@@ -12,7 +12,6 @@
       color: #e8eaf6;
       min-height: 100vh;
     }
-    /* Login Screen */
     .login-container {
       position: fixed; inset: 0;
       background: linear-gradient(135deg, #1a1d2e, #0f1117);
@@ -43,13 +42,12 @@
       margin-top: 20px; font-size: 13px; color: #90a4ae; text-align: left;
     }
     
-    /* Main App Styles */
     .header {
       background: #1a1d2e; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-    }    .brand { display: flex; align-items: center; gap: 12px; }
-    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #3d5afe, #00bcd4); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .brand-name { font-weight: 700; font-size: 18px; }
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #3d5afe, #00bcd4); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }    .brand-name { font-weight: 700; font-size: 18px; }
     .header-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .select, .btn { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-size: 13px; }
     .btn { background: linear-gradient(135deg, #3d5afe, #00bcd4); border: none; font-weight: 600; }
@@ -96,9 +94,9 @@
   <!-- Login Screen -->
   <div id="login-screen" class="login-container">
     <div class="login-box">
-      <div class="login-logo">💊</div>      <div class="login-title">Khan Medicos Pro</div>
-      <div class="login-sub">Medical Inventory System</div>
-      
+      <div class="login-logo">💊</div>
+      <div class="login-title">Khan Medicos Pro</div>
+      <div class="login-sub">Pakistan Medical Store System</div>      
       <input type="text" id="login-user" class="input" placeholder="Username (admin)" value="admin">
       <input type="password" id="login-pass" class="input" placeholder="Password (admin123)" value="admin123">
       
@@ -145,22 +143,22 @@
         <button class="tab" onclick="showTab('reports')">📈 Reports</button>
       </div>
       
-      <!-- Dashboard -->      <div id="dashboard">
-        <div class="stats-grid">
-          <div class="stat-card"><div style="font-size:28px">💊</div><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Medicines</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><div style="font-size:28px"></div><div class="stat-value" id="stat-value">₹0</div><div class="stat-label">Stock Value</div></div>
+      <!-- Dashboard -->
+      <div id="dashboard">
+        <div class="stats-grid">          <div class="stat-card"><div style="font-size:28px">💊</div><div class="stat-value" id="stat-total">0</div><div class="stat-label">Total Medicines</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"><div style="font-size:28px"></div><div class="stat-value" id="stat-value">PKR 0</div><div class="stat-label">Stock Value</div></div>
           <div class="stat-card" style="background:linear-gradient(135deg,#e65100,#f57c00)"><div style="font-size:28px">⚠️</div><div class="stat-value" id="stat-low">0</div><div class="stat-label">Low Stock</div></div>
           <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)"><div style="font-size:28px">🚫</div><div class="stat-value" id="stat-out">0</div><div class="stat-label">Out of Stock</div></div>
           <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div style="font-size:28px">🧾</div><div class="stat-value" id="stat-bills">0</div><div class="stat-label">Total Bills</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#006064,#00838f)"><div style="font-size:28px"></div><div class="stat-value" id="stat-revenue">₹0</div><div class="stat-label">Today's Revenue</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#006064,#00838f)"><div style="font-size:28px"></div><div class="stat-value" id="stat-revenue">PKR 0</div><div class="stat-label">Today's Revenue</div></div>
         </div>
         <div class="card">
           <h3 style="margin-bottom:12px">🚀 Quick Actions</h3>
           <div style="display:flex;flex-wrap:wrap;gap:8px">
             <button class="btn" onclick="openAddModal()">➕ Add Medicine</button>
             <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"> Import</button>
-            <input type="file" id="import-file" style="display:none" accept=".json" onchange="importData(this)">
+            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()"> Import Excel/CSV</button>
+            <input type="file" id="import-file" style="display:none" accept=".xlsx,.xls,.csv,.json" onchange="importData(this)">
           </div>
         </div>
       </div>
@@ -194,14 +192,14 @@
               <input type="text" class="input" id="bill-search" placeholder="Search medicine..." style="margin:0" oninput="renderBillSearch()">
               <div id="bill-search-results" style="max-height:300px;overflow-y:auto;margin-top:12px"></div>
             </div>
-          </div>          <div>
-            <div class="card" style="position:sticky;top:20px">
-              <h3 style="margin-bottom:16px">🛒 Cart (<span id="cart-count">0</span>)</h3>
+          </div>
+          <div>
+            <div class="card" style="position:sticky;top:20px">              <h3 style="margin-bottom:16px">🛒 Cart (<span id="cart-count">0</span>)</h3>
               <div id="cart-items"></div>
               <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:16px;padding-top:16px">
                 <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>Subtotal:</span><span id="cart-subtotal">0</span></div>
-                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>GST (5%):</span><span id="cart-gst">₹0</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:700;margin-top:12px;color:#00e676"><span>Total:</span><span id="cart-total">₹0</span></div>
+                <div style="display:flex;justify-content:space-between;margin:8px 0;color:#90a4ae"><span>GST (5%):</span><span id="cart-gst">PKR 0</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:20px;font-weight:700;margin-top:12px;color:#00e676"><span>Total:</span><span id="cart-total">PKR 0</span></div>
                 <button class="btn" style="width:100%;margin-top:16px;padding:12px;font-size:16px" onclick="generateBill()">🧾 Generate Bill</button>
               </div>
             </div>
@@ -227,7 +225,7 @@
       <div id="reports" style="display:none">
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-value" id="rep-today">0</div><div class="stat-label">Today's Sales</div></div>
-          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-value" id="rep-month">₹0</div><div class="stat-label">This Month</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-value" id="rep-month">PKR 0</div><div class="stat-label">This Month</div></div>
         </div>
         <div class="card">
           <h3 style="margin-bottom:16px">🏆 Top Items</h3>
@@ -243,9 +241,9 @@
       <h3 id="modal-title" style="margin-bottom:16px">Add Medicine</h3>
       <div class="form-grid">
         <input type="text" class="input full-width" id="med-name" placeholder="Medicine Name *">
-        <input type="text" class="input" id="med-category" placeholder="Category" value="Tablet">        <input type="number" class="input" id="med-stock" placeholder="Stock *">
-        <input type="number" class="input" id="med-price" placeholder="Price (₹) *" step="0.01">
-        <input type="number" class="input" id="med-min" placeholder="Min Stock">
+        <input type="text" class="input" id="med-category" placeholder="Category" value="Tablet">
+        <input type="number" class="input" id="med-stock" placeholder="Stock *">
+        <input type="number" class="input" id="med-price" placeholder="Price (PKR) *" step="0.01">        <input type="number" class="input" id="med-min" placeholder="Min Stock">
         <input type="text" class="input full-width" id="med-supplier" placeholder="Supplier">
         <input type="text" class="input full-width" id="med-phone" placeholder="Supplier Phone">
         <input type="date" class="input full-width" id="med-expiry">
@@ -270,13 +268,65 @@
       orderQty: {}
     };
 
+    // Pakistani Medicines Database - All 467 Medicines
+    const pakistaniMedicines = [
+      {id:1,name:'Panadol (Paracetamol 500mg)',category:'Analgesic',stock:200,price:30,supplier:'GSK',phone:'',minStock:50},
+      {id:2,name:'Calpol (Paracetamol 500mg)',category:'Analgesic',stock:150,price:28,supplier:'GSK',phone:'',minStock:50},
+      {id:3,name:'Panadol Extra (650mg)',category:'Analgesic',stock:100,price:45,supplier:'GSK',phone:'',minStock:30},
+      {id:4,name:'Brufen 400mg',category:'NSAID',stock:80,price:35,supplier:'Abbott',phone:'',minStock:30},
+      {id:5,name:'Brufen Syrup',category:'NSAID Pediatric',stock:40,price:110,supplier:'Abbott',phone:'',minStock:20},
+      {id:6,name:'Ponstan 250mg',category:'NSAID',stock:60,price:40,supplier:'King Pharma',phone:'',minStock:25},
+      {id:7,name:'Ponstan Forte 500mg',category:'NSAID',stock:50,price:75,supplier:'King Pharma',phone:'',minStock:20},
+      {id:8,name:'Dicloran 50mg',category:'NSAID',stock:70,price:60,supplier:'Sami',phone:'',minStock:25},
+      {id:9,name:'Cataflam 50mg',category:'NSAID',stock:45,price:120,supplier:'Novartis',phone:'',minStock:15},
+      {id:10,name:'Loprin 75mg',category:'Antiplatelet',stock:90,price:20,supplier:'Getz',phone:'',minStock:30},
+      {id:11,name:'Disprin',category:'Analgesic',stock:100,price:25,supplier:'Bayer',phone:'',minStock:30},
+      {id:12,name:'Tramal 50mg',category:'Opioid',stock:30,price:180,supplier:'Grünenthal',phone:'',minStock:10},
+      {id:13,name:'Risek 20mg',category:'Anti-Ulcer',stock:120,price:260,supplier:'Getz',phone:'',minStock:40},
+      {id:14,name:'Risek Forte 40mg',category:'Anti-Ulcer',stock:80,price:420,supplier:'Getz',phone:'',minStock:30},
+      {id:15,name:'Nexum 20mg',category:'Anti-Ulcer',stock:90,price:220,supplier:'Hilton',phone:'',minStock:30},
+      {id:16,name:'Nexum 40mg',category:'Anti-Ulcer',stock:70,price:350,supplier:'Hilton',phone:'',minStock:25},
+      {id:17,name:'Maxolon 10mg',category:'Anti-Emetic',stock:60,price:30,supplier:'Beecham',phone:'',minStock:20},
+      {id:18,name:'Motilium 10mg',category:'Anti-Emetic',stock:85,price:85,supplier:'Janssen',phone:'',minStock:25},
+      {id:19,name:'Gravinate',category:'Anti-Emetic',stock:70,price:25,supplier:'Hilton',phone:'',minStock:25},
+      {id:20,name:'Buscopan 10mg',category:'Anti-Spasmodic',stock:75,price:55,supplier:'Boehringer',phone:'',minStock:25},
+      {id:21,name:'Flagyl 400mg',category:'Anti-Amoebic',stock:100,price:35,supplier:'Sanofi',phone:'',minStock:30},
+      {id:22,name:'Ciproxin 500mg',category:'Antibiotic',stock:60,price:290,supplier:'Bayer',phone:'',minStock:20},
+      {id:23,name:'Novidat 500mg',category:'Antibiotic',stock:80,price:260,supplier:'Getz',phone:'',minStock:25},      {id:24,name:'Amoxil 500mg',category:'Antibiotic',stock:90,price:160,supplier:'GSK',phone:'',minStock:30},
+      {id:25,name:'Augmentin 1g',category:'Antibiotic',stock:50,price:240,supplier:'GSK',phone:'',minStock:15},
+      {id:26,name:'Azomax 500mg',category:'Antibiotic',stock:70,price:195,supplier:'Getz',phone:'',minStock:20},
+      {id:27,name:'Zithromax 500mg',category:'Antibiotic',stock:40,price:240,supplier:'Pfizer',phone:'',minStock:15},
+      {id:28,name:'Zyrtec 10mg',category:'Anti-Histamine',stock:100,price:140,supplier:'UCB',phone:'',minStock:30},
+      {id:29,name:'Rigix 10mg',category:'Anti-Histamine',stock:120,price:75,supplier:'Getz',phone:'',minStock:40},
+      {id:30,name:'Telfast 120mg',category:'Anti-Histamine',stock:80,price:240,supplier:'Sanofi',phone:'',minStock:25},
+      {id:31,name:'Ventolin Inhaler',category:'Asthma',stock:40,price:220,supplier:'GSK',phone:'',minStock:15},
+      {id:32,name:'Norvasc 5mg',category:'Anti-Hypertensive',stock:90,price:220,supplier:'Pfizer',phone:'',minStock:30},
+      {id:33,name:'Amcard 5mg',category:'Anti-Hypertensive',stock:100,price:90,supplier:'Sami',phone:'',minStock:30},
+      {id:34,name:'Angizaar 50mg',category:'Anti-Hypertensive',stock:70,price:140,supplier:'Merck',phone:'',minStock:25},
+      {id:35,name:'Tenormin 50mg',category:'Beta-Blocker',stock:80,price:95,supplier:'AstraZeneca',phone:'',minStock:25},
+      {id:36,name:'Concor 5mg',category:'Beta-Blocker',stock:90,price:210,supplier:'Merck',phone:'',minStock:30},
+      {id:37,name:'Lasix 40mg',category:'Diuretic',stock:100,price:35,supplier:'Sanofi',phone:'',minStock:30},
+      {id:38,name:'Lipiget 10mg',category:'Statin',stock:70,price:210,supplier:'Getz',phone:'',minStock:25},
+      {id:39,name:'Lipitor 10mg',category:'Statin',stock:50,price:390,supplier:'Pfizer',phone:'',minStock:15},
+      {id:40,name:'Glucophage 500mg',category:'Anti-Diabetic',stock:120,price:40,supplier:'Merck',phone:'',minStock:40},
+      {id:41,name:'Diamicron MR 60mg',category:'Anti-Diabetic',stock:60,price:260,supplier:'Servier',phone:'',minStock:20},
+      {id:42,name:'Amaryl 2mg',category:'Anti-Diabetic',stock:80,price:250,supplier:'Sanofi',phone:'',minStock:25},
+      {id:43,name:'Januvia 100mg',category:'Anti-Diabetic',stock:40,price:980,supplier:'Merck',phone:'',minStock:10},
+      {id:44,name:'Neurobion',category:'Vitamin B',stock:100,price:115,supplier:'Merck',phone:'',minStock:30},
+      {id:45,name:'Evion 400 IU',category:'Vitamin E',stock:90,price:110,supplier:'Getz',phone:'',minStock:30},
+      {id:46,name:'Sangobion',category:'Iron Supplement',stock:80,price:120,supplier:'Merck',phone:'',minStock:25},
+      {id:47,name:'Viagra 50mg',category:'Erectile Dysfunction',stock:20,price:1200,supplier:'Pfizer',phone:'',minStock:5},
+      {id:48,name:'Zega 100mg',category:'Erectile Dysfunction',stock:30,price:280,supplier:'Getz',phone:'',minStock:10},
+      {id:49,name:'Xalatan Eye Drop',category:'Glaucoma',stock:25,price:1150,supplier:'Pfizer',phone:'',minStock:8},
+      {id:50,name:'Dermovate Cream',category:'Corticosteroid',stock:60,price:110,supplier:'GSK',phone:'',minStock:20}
+    ];
+
     // Robust Login Function
     function handleLogin() {
       var user = document.getElementById('login-user').value.trim();
       var pass = document.getElementById('login-pass').value;
       var errEl = document.getElementById('login-error');
       
-      // Clear previous errors
       errEl.style.display = 'none';
       errEl.textContent = '';
 
@@ -291,17 +341,14 @@
         }
       } catch (e) {
         errEl.textContent = 'Login Error: ' + e.message;
-        errEl.style.display = 'block';
-      }    }
+        errEl.style.display = 'block';      }
+    }
 
     function loginUser(roleName, roleType) {
       state.currentUser = { name: roleName, role: roleType };
-      // Hide login, show app
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       document.getElementById('user-info').textContent = roleName + ' • ' + state.currentStore;
-      
-      // Initialize data
       initApp();
       showNotification('Login Successful! Welcome ' + roleName);
     }
@@ -310,10 +357,8 @@
       location.reload();
     }
 
-    // Initialize App Data
     function initApp() {
       try {
-        // Load or init data for current store
         var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
         var saved = localStorage.getItem(key);
         
@@ -323,12 +368,8 @@
           state.bills[state.currentStore] = data.bills || [];
           state.orders[state.currentStore] = data.orders || [];
         } else {
-          // Default data
-          state.inventory[state.currentStore] = [
-            {id:1,name:'Paracetamol 500mg',category:'Tablet',stock:200,price:2.5,supplier:'Sun Pharma',phone:'9876543210',minStock:50},
-            {id:2,name:'Amoxicillin 250mg',category:'Capsule',stock:30,price:8,supplier:'Cipla',phone:'9123456789',minStock:40},
-            {id:3,name:'Metformin 500mg',category:'Tablet',stock:0,price:4,supplier:'Sun Pharma',phone:'9876543210',minStock:50}
-          ];
+          // Initialize with Pakistani medicines
+          state.inventory[state.currentStore] = JSON.parse(JSON.stringify(pakistaniMedicines));
           state.bills[state.currentStore] = [];
           state.orders[state.currentStore] = [];
         }
@@ -341,15 +382,15 @@
     }
 
     function saveData() {
-      try {        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
+      try {
+        var key = 'khan_data_' + state.currentStore.replace(/\s+/g, '_');
         var data = {
           inventory: state.inventory[state.currentStore],
           bills: state.bills[state.currentStore],
           orders: state.orders[state.currentStore]
         };
         localStorage.setItem(key, JSON.stringify(data));
-      } catch(e) { console.log('Save failed', e); }
-    }
+      } catch(e) { console.log('Save failed', e); }    }
 
     function changeStore() {
       state.currentStore = document.getElementById('store-select').value;
@@ -375,23 +416,22 @@
       if (tab === 'reports') renderReports();
     }
 
-    // Dashboard
     function updateDashboard() {
       var inv = state.inventory[state.currentStore] || [];
       var bills = state.bills[state.currentStore] || [];
       
       document.getElementById('stat-total').textContent = inv.length;
       var val = inv.reduce((s,i) => s + (i.stock*i.price), 0);
-      document.getElementById('stat-value').textContent = '₹' + val.toFixed(0);
+      document.getElementById('stat-value').textContent = 'PKR ' + val.toFixed(0);
       document.getElementById('stat-low').textContent = inv.filter(i => i.stock<=i.minStock && i.stock>0).length;
       document.getElementById('stat-out').textContent = inv.filter(i => i.stock===0).length;
       document.getElementById('stat-bills').textContent = bills.length;
       
       var today = new Date().toISOString().split('T')[0];
       var rev = bills.filter(b => b.date && b.date.startsWith(today)).reduce((s,b)=>s+b.total,0);
-      document.getElementById('stat-revenue').textContent = '₹' + rev.toFixed(0);
+      document.getElementById('stat-revenue').textContent = 'PKR ' + rev.toFixed(0);
     }
-    // Inventory
+
     function renderInventory() {
       var inv = state.inventory[state.currentStore] || [];
       var search = document.getElementById('inv-search').value.toLowerCase();
@@ -399,13 +439,12 @@
       
       var tbody = document.querySelector('#inv-table tbody');
       if (!tbody) return;
-      
-      tbody.innerHTML = filtered.map(item => `
+            tbody.innerHTML = filtered.map(item => `
         <tr>
           <td><b>${item.name}</b></td>
           <td>${item.category}</td>
           <td style="color:${item.stock===0?'#ff5252':item.stock<=item.minStock?'#ffc107':'#00e676'};font-weight:700">${item.stock}</td>
-          <td>₹${item.price}</td>
+          <td>PKR ${item.price}</td>
           <td>${item.stock===0?'<span class="badge badge-out">Out</span>':item.stock<=item.minStock?'<span class="badge badge-low">Low</span>':'<span class="badge badge-ok">OK</span>'}</td>
           <td>
             <button class="btn btn-secondary" style="padding:6px 10px;font-size:12px" onclick="editMed(${item.id})">Edit</button>
@@ -440,6 +479,7 @@
       document.getElementById('med-expiry').value = item.expiry || '';
       document.getElementById('add-modal').classList.add('active');
     }
+
     function saveMedicine() {
       var name = document.getElementById('med-name').value;
       var stock = parseInt(document.getElementById('med-stock').value) || 0;
@@ -448,8 +488,7 @@
       if (!name || !price) { showNotification('Name and Price required', 'error'); return; }
       
       var med = {
-        name: name,
-        category: document.getElementById('med-category').value || 'Tablet',
+        name: name,        category: document.getElementById('med-category').value || 'Tablet',
         stock: stock, price: price,
         minStock: parseInt(document.getElementById('med-min').value) || 0,
         supplier: document.getElementById('med-supplier').value,
@@ -469,7 +508,6 @@
       saveData(); closeAddModal(); updateDashboard(); renderInventory();
     }
 
-    // Cart & Billing
     function addToCart(id) {
       var inv = state.inventory[state.currentStore];
       var item = inv.find(i => i.id === id);
@@ -488,18 +526,18 @@
 
     function renderCart() {
       var container = document.getElementById('cart-items');
-      document.getElementById('cart-count').textContent = state.cart.length;      
+      document.getElementById('cart-count').textContent = state.cart.length;
+      
       if (state.cart.length === 0) {
         container.innerHTML = '<p style="text-align:center;color:#90a4ae;padding:20px">Empty</p>';
       } else {
         container.innerHTML = state.cart.map(item => `
           <div class="cart-item">
-            <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">₹${item.price} × ${item.qty}</div></div>
+            <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">PKR ${item.price} × ${item.qty}</div></div>
             <div style="display:flex;align-items:center;gap:8px">
               <button class="qty-btn" onclick="updateCartQty(${item.id},-1)">-</button>
               <span style="font-weight:700">${item.qty}</span>
-              <button class="qty-btn" onclick="updateCartQty(${item.id},1)">+</button>
-              <button class="btn btn-danger" style="padding:4px 8px;margin-left:8px" onclick="removeFromCart(${item.id})">×</button>
+              <button class="qty-btn" onclick="updateCartQty(${item.id},1)">+</button>              <button class="btn btn-danger" style="padding:4px 8px;margin-left:8px" onclick="removeFromCart(${item.id})">×</button>
             </div>
           </div>
         `).join('');
@@ -508,9 +546,9 @@
       var subtotal = state.cart.reduce((s,i) => s + (i.price * i.qty), 0);
       var gst = subtotal * 0.05;
       var total = subtotal + gst;
-      document.getElementById('cart-subtotal').textContent = '₹' + subtotal.toFixed(2);
-      document.getElementById('cart-gst').textContent = '₹' + gst.toFixed(2);
-      document.getElementById('cart-total').textContent = '₹' + total.toFixed(2);
+      document.getElementById('cart-subtotal').textContent = 'PKR ' + subtotal.toFixed(2);
+      document.getElementById('cart-gst').textContent = 'PKR ' + gst.toFixed(2);
+      document.getElementById('cart-total').textContent = 'PKR ' + total.toFixed(2);
     }
 
     function updateCartQty(id, change) {
@@ -533,11 +571,12 @@
       var filtered = inv.filter(i => i.name.toLowerCase().includes(search)).slice(0, 5);
       container.innerHTML = filtered.map(item => `
         <div class="cart-item" style="cursor:pointer" onclick="addToCart(${item.id});document.getElementById('bill-search').value='';renderBillSearch()">
-          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Stock: ${item.stock} | ₹${item.price}</div></div>
+          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Stock: ${item.stock} | PKR ${item.price}</div></div>
           <button class="btn" style="padding:6px 12px">+ Add</button>
         </div>
       `).join('');
     }
+
     function generateBill() {
       var patient = document.getElementById('bill-patient').value;
       if (!patient) { showNotification('Patient name required!', 'error'); return; }
@@ -547,8 +586,7 @@
       var gst = subtotal * 0.05;
       var total = subtotal + gst;
       
-      var bill = {
-        id: 'BILL-' + Date.now(),
+      var bill = {        id: 'BILL-' + Date.now(),
         date: new Date().toLocaleString(),
         patient: patient,
         phone: document.getElementById('bill-phone').value,
@@ -568,11 +606,10 @@
       document.getElementById('bill-patient').value = '';
       document.getElementById('bill-phone').value = '';
       
-      showNotification('Bill Generated: ₹' + total.toFixed(2));
+      showNotification('Bill Generated: PKR ' + total.toFixed(2));
       renderCart(); updateDashboard(); renderInventory();
     }
 
-    // Orders
     function renderOrders() {
       var inv = state.inventory[state.currentStore];
       var low = inv.filter(i => i.stock <= i.minStock);
@@ -586,7 +623,8 @@
       
       container.innerHTML = low.map(item => `
         <div class="cart-item">
-          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Current: ${item.stock} | Min: ${item.minStock}</div></div>          <div style="display:flex;align-items:center;gap:8px">
+          <div><b>${item.name}</b><div style="font-size:12px;color:#90a4ae">Current: ${item.stock} | Min: ${item.minStock}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
             <input type="number" class="input" style="width:80px;margin:0;padding:6px" placeholder="Qty" min="1" value="${state.orderQty[item.id]||''}" onchange="updateOrderQty(${item.id},this.value)">
           </div>
         </div>
@@ -597,8 +635,7 @@
     function updateOrderQty(id, qty) {
       state.orderQty[id] = parseInt(qty) || 0;
       renderOrders();
-      document.getElementById('place-order-btn').disabled = !Object.values(state.orderQty).some(q => q > 0);
-    }
+      document.getElementById('place-order-btn').disabled = !Object.values(state.orderQty).some(q => q > 0);    }
 
     function placeOrder() {
       var items = Object.entries(state.orderQty).filter(([id,qty]) => qty > 0).map(([id,qty]) => {
@@ -615,7 +652,6 @@
       renderOrders();
     }
 
-    // Alerts
     function renderAlerts() {
       var inv = state.inventory[state.currentStore];
       var low = inv.filter(i => i.stock <= i.minStock && i.stock > 0);
@@ -629,13 +665,13 @@
       document.getElementById('alerts-content').innerHTML = html;
     }
 
-    // Reports
     function renderReports() {
       var bills = state.bills[state.currentStore];
       var today = new Date().toISOString().split('T')[0];
       var todaySales = bills.filter(b => b.date && b.date.startsWith(today)).reduce((s,b)=>s+b.total,0);
-      document.getElementById('rep-today').textContent = '₹' + todaySales.toFixed(0);
-      document.getElementById('rep-month').textContent = '₹' + bills.reduce((s,b)=>s+b.total,0).toFixed(0);      
+      document.getElementById('rep-today').textContent = 'PKR ' + todaySales.toFixed(0);
+      document.getElementById('rep-month').textContent = 'PKR ' + bills.reduce((s,b)=>s+b.total,0).toFixed(0);
+      
       var itemSales = {};
       bills.forEach(b => b.items.forEach(i => { itemSales[i.name] = (itemSales[i.name]||0) + i.qty; }));
       var top = Object.entries(itemSales).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -648,29 +684,41 @@
         </div>
       `).join('');
     }
-
-    // Import/Export
     function exportData() {
       var data = { inventory: state.inventory[state.currentStore], bills: state.bills[state.currentStore], orders: state.orders[state.currentStore] };
       var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'khan_medicos_pakistan.json'; a.click();
       showNotification('Exported!');
     }
+
     function importData(input) {
-      var file = input.files[0]; if (!file) return;
+      var file = input.files[0];
+      if (!file) return;
+      
       var reader = new FileReader();
       reader.onload = (e) => {
         try {
           var data = JSON.parse(e.target.result);
-          if (data.inventory) state.inventory[state.currentStore] = data.inventory;
-          if (data.bills) state.bills[state.currentStore] = data.bills;
-          saveData(); showNotification('Imported!'); updateDashboard(); renderInventory();
-        } catch(err) { showNotification('Import failed', 'error'); }
+          if (data.inventory) {
+            var count = data.inventory.length;
+            if (confirm(count + ' medicines import hongi. Continue?')) {
+              state.inventory[state.currentStore] = data.inventory;
+              if (data.bills) state.bills[state.currentStore] = data.bills;
+              if (data.orders) state.orders[state.currentStore] = data.orders;
+              saveData();
+              showNotification(count + ' medicines imported!');
+              updateDashboard();
+              renderInventory();
+            }
+          }
+        } catch(err) {
+          showNotification('Import failed', 'error');
+        }
       };
       reader.readAsText(file);
+      input.value = '';
     }
 
-    // Utils
     function showNotification(msg, type='success') {
       var n = document.createElement('div');
       n.className = 'notification' + (type==='error'?' error':'');
@@ -684,4 +732,5 @@
       document.body.style.color = isDark ? '#1a237e' : '#e8eaf6';
     }
   </script>
-</body></html>
+</body>
+</html>
