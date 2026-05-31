@@ -3,18 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khan Medicos Pro - FINAL FIXED</title>
+  <title>Khan Medicos Pro - DIRECT ACCESS</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body { background: #0f1117; color: #e8eaf6; min-height: 100vh; }
-    .login-container { position: fixed; inset: 0; background: #0f1117; display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .login-box { background: #1a1d2e; padding: 30px; border-radius: 12px; width: 90%; max-width: 380px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
-    .login-logo { font-size: 40px; margin-bottom: 10px; }
-    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; }
-    .input { width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: white; margin-bottom: 12px; font-size: 15px; }
-    .btn-login { width: 100%; background: #3d5afe; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
-    .error-msg { color: #ff5252; font-size: 13px; margin-top: 8px; display: none; }
     .header { background: #1a1d2e; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
     .brand { display: flex; align-items: center; gap: 10px; }
     .logo { width: 36px; height: 36px; background: #3d5afe; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
@@ -33,6 +26,7 @@
     th { background: #252838; color: #90caf9; padding: 10px; text-align: left; position: sticky; top: 0; }
     td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     tr:hover td { background: rgba(255,255,255,0.03); }
+    .input { width: 100%; background: #252838; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: white; margin-bottom: 12px; font-size: 15px; }
     .btn { padding: 8px 14px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; margin: 2px; }
     .btn-primary { background: #3d5afe; color: white; }
     .btn-success { background: #00e676; color: white; }
@@ -49,6 +43,11 @@
     .bill-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
     .bill-table th { background: #eee; color: black; padding: 6px; border: 1px solid #ddd; }    .bill-table td { padding: 6px; border: 1px solid #eee; color: black; }
     .bill-tot { border-top: 2px solid black; padding-top: 5px; font-weight: 700; font-size: 14px; }
+    .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; color: #fff; }
+    .badge-out { background: #ff5252; }
+    .badge-low { background: #ffc107; color: #000; }
+    .badge-ok { background: #00e676; }
+    .badge-expiry { background: #e040fb; }
     @media print { body * { visibility: hidden; } #bill-modal, #bill-modal * { visibility: visible; } #bill-modal { position: absolute; left: 0; top: 0; width: 100%; background: white; display: block; } .bill-actions { display: none; } }
     @media (max-width: 768px) { .billing-grid { grid-template-columns: 1fr !important; } .cart-sidebar { position: static !important; } .grid-4 { grid-template-columns: repeat(2, 1fr); } }
     .hidden { display: none !important; }
@@ -57,31 +56,19 @@
 </head>
 <body>
 
-  <div id="login-screen" class="login-container">
-    <div class="login-box">
-      <div class="login-logo">💊</div>
-      <div class="login-title">Khan Medicos Pro</div>
-      <input type="text" id="user" class="input" placeholder="Username">
-      <input type="password" id="pass" class="input" placeholder="Password">
-      <button class="btn-login" onclick="doLogin()">Login</button>
-      <div id="login-err" class="error-msg">Invalid Username or Password</div>
-    </div>
-  </div>
-
-  <div id="app" class="hidden">
+  <div id="app">
     <div class="header">
       <div class="brand">
-        <div class="logo"></div>
+        <div class="logo">💊</div>
         <div class="brand-name">Khan Medicos</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span id="user-role-display" style="font-size:12px; color:#90a4ae;"></span>
-        <button class="btn btn-sec" onclick="logout()">Logout</button>
+        <span id="user-role-display" style="font-size:12px; color:#90a4ae;">System Unlocked</span>
       </div>
     </div>
     
     <div class="nav">
-      <button class="nav-btn admin-only" id="nav-dash" onclick="go('dash')">📊 Dashboard</button>
+      <button class="nav-btn" id="nav-dash" onclick="go('dash')">📊 Dashboard</button>
       <button class="nav-btn" id="nav-inv" onclick="go('inv')">💊 Inventory</button>
       <button class="nav-btn" id="nav-bill" onclick="go('bill')">🧾 Billing</button>
       <button class="nav-btn" id="nav-alert" onclick="go('alert')">⚠️ Alerts</button>
@@ -95,8 +82,9 @@
           <div class="stat-card" style="background:linear-gradient(135deg,#b71c1c,#c62828)"><div class="stat-val" id="d-out">0</div><div class="stat-lbl">Out of Stock</div></div>
           <div class="stat-card" style="background:linear-gradient(135deg,#4a148c,#6a1b9a)"><div class="stat-val" id="d-rev">PKR 0</div><div class="stat-lbl">Today's Sale</div></div>
         </div>
-        <div class="card admin-only">
-          <h3>Quick Actions</h3>          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+        <div class="card">
+          <h3>Quick Actions</h3>
+          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="openAdd()">+ Add Medicine</button>
             <button class="btn btn-success" onclick="document.getElementById('excel-file').click()">📥 Import Excel</button>
             <button class="btn btn-sec" onclick="exportCSV()">📄 Export CSV</button>
@@ -213,13 +201,6 @@
   </div>
 
   <script>
-    var usersDB = [
-      { id: "admin", pass: "admin@123", role: "Admin" },
-      { id: "staff1", pass: "123456", role: "Staff" },
-      { id: "staff2", pass: "123456", role: "Staff" }
-    ];
-
-    var currentUserRole = "";
     var meds = JSON.parse(localStorage.getItem('khan_meds')) || [];
     var cart = [];
     var bills = JSON.parse(localStorage.getItem('khan_bills')) || [];
@@ -228,43 +209,18 @@
     var filteredMeds = [];
     var editId = null;
 
-    function doLogin() {
-      var u = document.getElementById('user').value.trim();
-      var p = document.getElementById('pass').value;
-      var foundUser = usersDB.find(user => user.id === u && user.pass === p);
-      
-      if (foundUser) {
-        currentUserRole = foundUser.role;
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').classList.remove('hidden');
-        document.getElementById('user-role-display').innerText = currentUserRole;
-        applyPermissions();
-        renderDash();
-        searchAndRender();
-      } else {
-        document.getElementById('login-err').style.display = 'block';
-      }    }
-    
-    function applyPermissions() {
-      var adminElements = document.querySelectorAll('.admin-only');
-      if (currentUserRole === 'Staff') {
-        document.getElementById('nav-dash').classList.add('hidden');
-        adminElements.forEach(el => el.style.display = 'none');
-        go('bill');
-      } else {
-        document.getElementById('nav-dash').classList.remove('hidden');
-        adminElements.forEach(el => el.style.display = '');
-        go('dash');
-      }
-    }
+    // Direct initialization bypasses login screen completely
+    window.onload = function() {
+      go('dash');
+    };
 
-    function logout() { location.reload(); }
     function closeModal() { document.getElementById('add-modal').classList.remove('active'); }
 
     function go(tab) {
       document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
       document.getElementById(tab).classList.remove('hidden');
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
       if(tab === 'dash') document.getElementById('nav-dash')?.classList.add('active');
       if(tab === 'inv') document.getElementById('nav-inv').classList.add('active');
       if(tab === 'bill') document.getElementById('nav-bill').classList.add('active');
@@ -292,7 +248,8 @@
           for (var i = 1; i < jsonData.length; i++) {
             var row = jsonData[i];
             if (row.length < 5) continue;
-            var med = {              id: Date.now() + i,
+            var med = {              
+              id: Date.now() + i,
               name: row[2] || row[1] || '',
               cat: row[3] || 'General',
               stock: 100,
@@ -341,7 +298,8 @@
       
       var today = new Date().toLocaleDateString();
       var todayBills = bills.filter(b => b.date === today);
-      var rev = todayBills.reduce((s,b)=>s+b.total, 0);      document.getElementById('d-rev').innerText = 'PKR ' + rev.toLocaleString();
+      var rev = todayBills.reduce((s,b)=>s+b.total, 0);      
+      document.getElementById('d-rev').innerText = 'PKR ' + rev.toLocaleString();
     }
 
     function searchAndRender() {
@@ -372,8 +330,8 @@
           if (daysLeft < 30) expiryBadge = ' <span class="badge badge-expiry">⚠️ ' + daysLeft + 'd</span>';
         }
         
-        var editBtn = currentUserRole === 'Admin' ? `<button class="btn btn-sec" style="padding:4px 8px; font-size:11px;" onclick="openEdit(${m.id})">Edit</button>` : '';
-        var delBtn = currentUserRole === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delMed(${m.id})">Del</button>` : '';
+        var editBtn = `<button class="btn btn-sec" style="padding:4px 8px; font-size:11px;" onclick="openEdit(${m.id})">Edit</button>`;
+        var delBtn = `<button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="delMed(${m.id})">Del</button>`;
 
         html += `<tr>
           <td><b>${m.name}</b></td>
@@ -390,7 +348,8 @@
       var pagHtml = '';
       if (totalPages > 1) {
         if (currentPage > 1) pagHtml += `<button class="btn btn-sec" onclick="changePage(${currentPage - 1})">⬅️ Prev</button>`;
-        pagHtml += `<span style="color:#90a4ae; padding:0 10px;">Page ${currentPage} of ${totalPages}</span>`;        if (currentPage < totalPages) pagHtml += `<button class="btn btn-sec" onclick="changePage(${currentPage + 1})">Next ➡️</button>`;
+        pagHtml += `<span style="color:#90a4ae; padding:0 10px;">Page ${currentPage} of ${totalPages}</span>`;        
+        if (currentPage < totalPages) pagHtml += `<button class="btn btn-sec" onclick="changePage(${currentPage + 1})">Next ➡️</button>`;
       }
       document.getElementById('pagination-container').innerHTML = pagHtml;
       document.getElementById('page-info').innerText = filteredMeds.length > 0 ? `Showing ${start+1}-${Math.min(end, filteredMeds.length)} of ${filteredMeds.length}` : 'No items found';
@@ -537,7 +496,8 @@
       });
       localStorage.setItem('khan_meds', JSON.stringify(meds));
 
-      var bill = {        id: 'INV-' + Date.now().toString().slice(-6),
+      var bill = {        
+        id: 'INV-' + Date.now().toString().slice(-6),
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
         patient: pName,
@@ -581,12 +541,12 @@
     function closeBillModal() { document.getElementById('bill-modal').classList.remove('active'); }
     function viewBill(id) { var bill = bills.find(b => b.id === id); if (bill) showBill(bill); }
 
-    // FIXED - NO ADMIN CHECK AT ALL
     function openAdd() {
       editId = null;
       document.getElementById('modal-title').innerText = 'Add Medicine';
       document.getElementById('m-name').value = '';
-      document.getElementById('m-cat').value = 'General';      document.getElementById('m-stock').value = '';
+      document.getElementById('m-cat').value = 'General';      
+      document.getElementById('m-stock').value = '';
       document.getElementById('m-price').value = '';
       document.getElementById('m-min').value = '20';
       document.getElementById('m-expiry').value = '';
@@ -635,7 +595,8 @@
       localStorage.setItem('khan_meds', JSON.stringify(meds));
       closeModal();
       renderDash();
-      searchAndRender();    }
+      searchAndRender();    
+    }
 
     function delMed(id) {
       if (confirm('Delete this medicine permanently?')) {
